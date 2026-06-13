@@ -1,5 +1,7 @@
 # 3D Tetris
 
+**嚴禁引入任何 Three.js 依賴， 3D 渲染架構必須強制基於 OGL 進行底層實作。**
+
 ## 1. 遊戲場景
 
 * 網格大小 10 (寬) x 20 (高) x 10 (深)
@@ -64,7 +66,7 @@
 
 * 幽靈方塊 (Ghost Piece)：
 正下方半透明投影 · 透過 OGL `Program` 傳入 Uniforms 控制 opacity 0.15 + emissiveIntensity 0.3 呼吸脈衝（需開啟 `transparent: true`）
-* 消除動畫：emissive 脈衝 3 次 → 從中心向四周爆炸散開（粒子化，在 `Program` 設定 `blendFunc: { src: gl.SRC_ALPHA, dst: gl.ONE }` 實作 AdditiveBlending）
+* 消除動畫：emissive 脈衝 3 次 → 從中心向四周爆炸散開（粒子化，需透過 `Program` 開啟 `transparent: true` 並呼叫 `setBlendFunc(gl.SRC_ALPHA, gl.ONE)` 實作 AdditiveBlending）
 * 硬降落：落點光暈擴散（半透明光環 0.3s）
 * Bloom (必須)：OGL 無內建 UnrealBloomPass，必須利用 `RenderTarget` 手動實作 Ping-Pong FBO Multi-pass 渲染（Pass 1: 提取亮度閾值 0.6，Pass 2 & 3: Ping-Pong 高斯模糊半徑 0.8，Pass 4: 將模糊結果以 strength 0.4 加成疊加回主場景）
 * 遊戲結束：去飽和 1.5s + 半透明遮罩（藉由全螢幕 Post-processing Shader FBO 將畫面灰階化）
