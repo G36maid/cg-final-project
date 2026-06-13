@@ -1,6 +1,6 @@
 # 3D Pinball
 
-**嚴禁引入任何 Three.js 依賴， 3D 渲染架構必須強制基於 OGL 進行底層實作。**
+**嚴禁引入任何 Three.js 依賴， 3D 渲染架構必須強制基於 [OGL](https://github.com/oframe/ogl) 進行底層實作。**
 
 ## 1. 彈球機台建模
 
