@@ -8,6 +8,17 @@
 
 **🎬 Demo 影片：影片檔案過大，無法上傳 Moodle，將以 YouTube 連結補充於此。**
 
+## 遊戲截圖
+
+| | |
+|---|---|
+| ![Dusk Park Meta-game](report/figures/theme-park-hub.png) | ![3D Pinball](report/figures/3d-pinball.png) |
+| **Theme-Park** — 黃昏樂園 Meta-game | **3D Pinball** — 霓虹彈珠台 |
+| ![Roller Coaster](report/figures/roller-coaster.png) | ![Rubik's Cube](report/figures/rubiks-cube.png) |
+| **Roller Coaster** — 雲霄飛車 | **Rubik's Cube** — 魔術方塊 |
+| ![3D Tetris](report/figures/3d-tetris.png) | |
+| **3D Tetris** — 立體俄羅斯方塊 | |
+
 ## 遊戲設計
 
 本專案是一個 3D 主題樂園 meta-game（黃昏樂園），玩家在黃昏時分的樂園廣場漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺取代幣（Tokens），再花費代幣搭乘雲霄飛車。Meta-game 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻；四個子遊戲透過頁面切換整合，保留各自原有玩法。
