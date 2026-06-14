@@ -4,9 +4,66 @@
 
 ## 這是什麼
 
-一個 3D 主題樂園廣場（hub），玩家在黃昏時分漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺代幣（Tokens），再花代幣搭雲霄飛車。
+一個 3D 主題樂園廣場（hub），玩家在黃昏時分漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺代幣（Tokens），再花代幣搭雲霄飛車。搭乘 3 次完成導覽，解鎖煙火慶祝。
 
-Hub 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻（點光源 + Phong、skybox、shadow mapping、cubemap 反射、材質貼圖、玩家控制、相機切換）；四個子遊戲透過頁面切換整合，保留各自原有玩法。
+Hub 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻；四個子遊戲透過頁面切換整合，保留各自原有玩法。
+
+## 操作
+
+| 按鍵 | 動作 |
+|---|---|
+| W A S D | 移動 |
+| 滑鼠 | 視角（pointer lock） |
+| C | 切換第一/第三人稱 |
+| E | 與設施互動（進入建物 / 搭車） |
+| M | 開關說明面板 |
+| ESC | 解除滑鼠鎖定 |
+
+## 設施
+
+| 設施 | 說明 | 入口 |
+|---|---|---|
+| Arcade Hall | 三台機台：彈珠台、魔術方塊、俄羅斯方塊 | 走入建物觸發 → 進入 Pinball |
+| Coaster Station | 每趟 20 Tokens | E 鍵扣款後載入雲霄飛車 |
+| Tour Train | 免費繞園導覽（選配） | — |
+| 中央噴泉 | Cubemap 反射展示 | 不可進入 |
+| 入口資訊板 | 目標/操作/設施說明 | M 鍵查看 |
+
+## Token 經濟
+
+| 來源 | Token 計算 |
+|---|---|
+| Pinball | score × 0.01（game over 時結算） |
+| Rubik's Cube | 解開即得 30 Tokens |
+| 3D-Tetris | 消行數 × 3（game over 時結算） |
+| Coaster | 每趟花 20 Tokens |
+
+所有 Token 交易經 `localStorage['dusk-park-state']` 持久化。從 hub 進入子遊戲時畫面右上角出現「↩ 返回樂園」按鈕，回去自動顯示獲得 Token 數。
+
+## Spec 技術對應
+
+### Technical Implementation (T1-T7)
+
+| Spec 項 | 實作 |
+|---|---|
+| T1 玩家滑鼠+鍵盤移動/旋轉 | WASD + pointer lock 第一人稱 |
+| T2 有意義的相機控制 | C 鍵切換第一/第三人稱 |
+| T3 點光源 + Phong | 路燈點光源 + directional sun fill，完整 Phong（ambient/diffuse/specular） |
+| T4 至少一物件材質貼圖 | 廣場石板地面 UV tile + 建物外牆程序貼圖 |
+| T5 Skybox | 黃昏程序 cubemap，500³ box |
+| T6 Cube map 反射 | 噴泉水面 Fresnel 反射 |
+| T7 Shadow mapping | OGL Shadow extra，2048² depth map，建物投射陰影至地面 |
+
+### Game Mechanics (D1-D6)
+
+| 維度 | 實作 |
+|---|---|
+| D1 清晰目標 | 「賺 tokens → 搭飛車 → 搭 3 次完成導覽」 |
+| D2 碰撞/互動偵測 | AABB 接近觸發 + E 鍵互動 |
+| D3 計分/進度可見 | HUD 顯示 token 數 + coaster rides |
+| D4 輸贏狀態 | 軟 win：搭 3 次 → 慶祝畫面；無 lose |
+| D5 遊戲回饋 | 接近提示、Token 增減通知 |
+| D6 遊戲內說明 | M 鍵說明面板 |
 
 ## 設計規格
 
@@ -14,22 +71,53 @@ Hub 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻（點光源 
 
 ## 執行
 
+從 repo 根目錄執行：
+
 ```sh
-miniserve .
+miniserve . -p 8765
 ```
 
-從 `Theme-Park/` 目錄下執行。純 ES modules，瀏覽器直接載入，無 build step。
+瀏覽器開啟 `http://localhost:8765/Theme-Park/`。純 ES modules，無 build step。
 
-## 與其他遊戲的關係
+## 檔案結構
 
-本專案整合 repo 中的四個獨立遊戲：
+```
+Theme-Park/
+├── index.html              # Hub 入口 + HUD + info panel + fade overlay
+├── styles.css              # 全域樣式（HUD、crosshair、info panel、loader）
+├── plan.md                 # 權威 spec
+├── src/
+│   ├── main.js             # Hub entry、game loop、場景初始化、接近觸發
+│   ├── constants.js        # 物理常數、顏色、座標、設施位置、Token 經濟
+│   ├── hub/
+│   │   ├── skybox.js       # 黃昏 cubemap 生成 + skybox mesh
+│   │   ├── lighting.js     # 點光源 uniform 工廠 + 預設貼圖
+│   │   ├── player.js       # 第一人稱控制器 + pointer lock + E/M 鍵
+│   │   ├── facilities.js   # 3 建物 + 資訊板，程序貼圖
+│   │   ├── fountain.js     # 中央噴泉 + cubemap 反射水面
+│   │   └── shadow.js       # Shadow mapping（orthographic sun camera）
+│   ├── shaders/
+│   │   ├── phong.js        # Phong shader（8 點光源 + shadow sampling）
+│   │   └── skybox.js       # Skybox vertex/fragment shader
+│   ├── geometry/
+│   │   └── ground.js       # 石板地面（程序貼圖 + UV tile）
+│   └── meta/
+│       ├── store.js        # localStorage 狀態持久化
+│       ├── hud.js          # HUD 更新 + 慶祝畫面
+│       ├── nav.js          # 場景切換（fade 過渡 + URL）
+│       └── hooks.js        # 子遊戲共用 hook（payout + back button）
+```
 
-- [`../3D-Pinball/`](../3D-Pinball/) — Arcade Hall 內的彈珠台機台
-- [`../Rubik's-Cube/`](../Rubik's-Cube/) — Arcade Hall 內的魔術方塊機台
-- [`../3D-Tetris/`](../3D-Tetris/) — Arcade Hall 內的俄羅斯方塊機台
-- [`../Roller-Coaster/`](../Roller-Coaster/) — Coaster Station 的雲霄飛車設施
+## 與子遊戲的整合
 
-各子遊戲可獨立執行；從 hub 進入時會加上「返回樂園」與代幣結算 hook。
+| 子遊戲 | Hook 位置 | Token 計算 | 事件 |
+|---|---|---|---|
+| 3D-Pinball | `index.html` inline script | `score × 0.01` | `dusk-park-gameover` |
+| Rubik's Cube | `index.html` inline script | 30 (solve) | `dusk-park-solved` |
+| 3D-Tetris | `index.html` inline script | `lines × 3` | `dusk-park-gameover` |
+| Roller-Coaster | `index.html` inline script | coastersRides++ | click back button |
+
+各子遊戲透過 `?from=hub` URL param 啟用整合模式：顯示返回按鈕、監聽 Token 事件。
 
 ## 技術棧
 
