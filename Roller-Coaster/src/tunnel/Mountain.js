@@ -2,20 +2,18 @@ import { Mesh, Sphere, Vec3 } from '../../ogl/src/index.js';
 import { TUNNEL_HEIGHT, TUNNEL_LIGHT_SPACING, COLORS, MAX_LIGHTS, TRACK_DIVISIONS } from '../config.js';
 
 const MOUNTAIN_RADIUS = 30;
+const DECORATIVE_MOUNTAIN_POSITION = [95, -5, 70];
 
-export function createMountain(gl, rockProgram, trackPath) {
+export function createMountain(gl, rockProgram) {
     const geom = new Sphere(gl, { radius: MOUNTAIN_RADIUS, widthSegments: 64, heightSegments: 32 });
     const mesh = new Mesh(gl, { geometry: geom, program: rockProgram });
 
-    const startFrame = trackPath.tunnelStartFrame;
-    const endFrame = trackPath.tunnelEndFrame;
-    const midFrame = Math.floor((startFrame + endFrame) / 2);
-    const midT = midFrame / TRACK_DIVISIONS;
-    const center = trackPath.getPointAt(midT, new Vec3());
-
-    mesh.position.copy(center);
-    mesh.position.y -= 5;
-    mesh.scale.set(1, 0.8, 1);
+    mesh.position.set(
+        DECORATIVE_MOUNTAIN_POSITION[0],
+        DECORATIVE_MOUNTAIN_POSITION[1],
+        DECORATIVE_MOUNTAIN_POSITION[2]
+    );
+    mesh.scale.set(1.2, 0.8, 1.2);
 
     return mesh;
 }

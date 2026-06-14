@@ -67,7 +67,7 @@ const tunnelGeometry = createTunnelGeometry(gl, trackPath);
 const tunnelMesh = new Mesh(gl, { geometry: tunnelGeometry, program: rockProgram });
 tunnelMesh.setParent(scene);
 
-const mountainMesh = createMountain(gl, rockProgram, trackPath);
+const mountainMesh = createMountain(gl, rockProgram);
 mountainMesh.setParent(scene);
 
 const tunnelLights = computeTunnelLights(trackPath);
