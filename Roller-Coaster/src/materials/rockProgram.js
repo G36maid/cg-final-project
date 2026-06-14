@@ -44,8 +44,9 @@ export function createRockProgram(gl) {
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
             }
         `,
-        fragment: uniformsGLSL + functionGLSL + `
+        fragment: `
             precision highp float;
+            ` + uniformsGLSL + functionGLSL + `
 
             varying vec3 vWorldPos;
             varying vec3 vNormal;
@@ -67,9 +68,9 @@ export function createRockProgram(gl) {
             uTime: { value: 0 },
             uAmbient: { value: 0.15 },
             uNumLights: { value: 0 },
-            uPointLightPos: { value: new Float32Array(MAX_LIGHTS * 3) },
-            uPointLightColor: { value: new Float32Array(MAX_LIGHTS * 3) },
-            uPointLightRange: { value: new Float32Array(MAX_LIGHTS) },
+            uPointLightPos: { value: new Array(MAX_LIGHTS * 3).fill(0) },
+            uPointLightColor: { value: new Array(MAX_LIGHTS * 3).fill(0) },
+            uPointLightRange: { value: new Array(MAX_LIGHTS).fill(0) },
         },
     });
 }
