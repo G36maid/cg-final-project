@@ -39,10 +39,12 @@ class DuskPark {
 
         this.scene = new Transform();
         this.nearestTrigger = null;
+        this.collisionObstacles = [];
         this.arcadeMenu = document.getElementById('arcade-menu');
 
         this.buildScene();
         this.player = new PlayerController(this.gl, this.camera, this.canvas);
+        this.player.setCollisionObstacles(this.collisionObstacles);
         this.player.onInteract = () => this.handleInteract();
         this.player.onToggleInfo = () => this.handleToggleInfo();
 
@@ -64,6 +66,7 @@ class DuskPark {
         const facilities = createFacilities(this.gl);
         this.facilityGroup = facilities.group;
         this.triggers = facilities.triggers;
+        this.collisionObstacles.push(...facilities.colliders);
         this.facilityGroup.setParent(this.scene);
         for (const child of this.facilityGroup.children) {
             shadow.add({ mesh: child, cast: true, receive: true });
@@ -73,6 +76,10 @@ class DuskPark {
         const fountain = createFountain(this.gl, this.cubemap);
         this.fountain = fountain.group;
         this.fountain.setParent(this.scene);
+        this.collisionObstacles.push({
+            center: [this.fountain.position.x, this.fountain.position.z],
+            halfSize: [fountain.radius + 0.35, fountain.radius + 0.35],
+        });
         for (const child of this.fountain.children) {
             shadow.add({ mesh: child, cast: child !== fountain.water && child !== fountain.upperWater, receive: true });
         }
@@ -226,4 +233,4 @@ class DuskPark {
     }
 }
 
-new DuskPark();
+window.duskPark = new DuskPark();

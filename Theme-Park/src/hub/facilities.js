@@ -7,6 +7,11 @@ const FACILITY_CONFIGS = [
     {
         key: 'ARCADE_HALL',
         texture: createArcadeTexture,
+        title: 'ARCADE HALL',
+        trimColor: COLORS.NEON_PINK,
+        doorColor: [0.06, 0.03, 0.10],
+        windowColor: COLORS.NEON_CYAN,
+        signColors: { border: COLORS.NEON_CYAN, title: COLORS.NEON_PINK },
         material: {
             ambient: [0.14, 0.10, 0.18],
             diffuse: [0.42, 0.35, 0.48],
@@ -17,11 +22,21 @@ const FACILITY_CONFIGS = [
     {
         key: 'COASTER_STATION',
         texture: createCoasterTexture,
+        title: 'COASTER',
+        trimColor: [1.0, 0.55, 0.25],
+        doorColor: [0.12, 0.11, 0.14],
+        windowColor: [1.0, 0.75, 0.36],
+        signColors: { border: [1.0, 0.55, 0.25], title: [1.0, 0.75, 0.36] },
         material: MATERIAL.METAL,
     },
     {
         key: 'TOUR_TRAIN',
         texture: createTrainTexture,
+        title: 'TOUR TRAIN',
+        trimColor: [1.0, 0.75, 0.36],
+        doorColor: [0.20, 0.10, 0.04],
+        windowColor: COLORS.NEON_PURPLE,
+        signColors: { border: COLORS.NEON_PURPLE, title: [1.0, 0.75, 0.36] },
         material: {
             ambient: [0.22, 0.14, 0.08],
             diffuse: [0.58, 0.36, 0.18],
@@ -36,10 +51,10 @@ function rgb(color, multiplier = 255) {
     return `rgb(${r}, ${g}, ${b})`
 }
 
-function createCanvas(size = 256) {
+function createCanvas(width = 256, height = width) {
     const canvas = document.createElement('canvas')
-    canvas.width = size
-    canvas.height = size
+    canvas.width = width
+    canvas.height = height
     return canvas
 }
 
@@ -58,10 +73,10 @@ function addNoise(ctx, size, opacity = 0.12) {
     ctx.putImageData(image, 0, 0)
 }
 
-function createTexture(gl, canvas) {
+function createTexture(gl, canvas, flipY = false) {
     return new Texture(gl, {
         image: canvas,
-        flipY: false,
+        flipY,
         generateMipmaps: true,
     })
 }
@@ -71,7 +86,48 @@ function createSolidTexture(gl, color) {
     const ctx = canvas.getContext('2d')
     ctx.fillStyle = rgb(color)
     ctx.fillRect(0, 0, 4, 4)
-    return createTexture(gl, canvas)
+    return createTexture(gl, canvas, true)
+}
+
+function createLabelTexture(gl, title, subtitle, colors) {
+    const width = 1536
+    const height = 512
+    const canvas = createCanvas(width, height)
+    const ctx = canvas.getContext('2d')
+    const gradient = ctx.createLinearGradient(0, 0, 0, height)
+
+    gradient.addColorStop(0, '#1a0d23')
+    gradient.addColorStop(0.55, '#08040c')
+    gradient.addColorStop(1, '#17091e')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, width, height)
+    ctx.strokeStyle = rgb(colors.border)
+    ctx.lineWidth = 18
+    ctx.shadowColor = rgb(colors.border)
+    ctx.shadowBlur = 24
+    ctx.strokeRect(32, 32, width - 64, height - 64)
+    ctx.shadowBlur = 0
+
+    ctx.fillStyle = rgb(colors.title)
+    ctx.font = '900 112px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.shadowColor = rgb(colors.title)
+    ctx.shadowBlur = 20
+    ctx.fillText(title, width / 2, 190)
+
+    ctx.fillStyle = '#ffd68a'
+    ctx.font = '900 70px sans-serif'
+    ctx.shadowColor = 'rgba(255, 214, 138, 0.75)'
+    ctx.shadowBlur = 12
+    ctx.fillText(subtitle, width / 2, 300)
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.62)'
+    ctx.font = 'bold 42px sans-serif'
+    ctx.shadowBlur = 0
+    ctx.fillText('Press E at door', width / 2, 398)
+
+    return createTexture(gl, canvas, true)
 }
 
 function createSolidProgram(gl, material, color) {
@@ -111,7 +167,6 @@ function createArcadeTexture(gl) {
     for (let x = 18; x < size; x += 52) {
         ctx.fillRect(x, 102, 18, 52)
     }
-
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)'
     ctx.lineWidth = 2
     for (let y = 0; y <= size; y += 64) {
@@ -121,7 +176,7 @@ function createArcadeTexture(gl) {
         ctx.stroke()
     }
 
-    return createTexture(gl, canvas)
+    return createTexture(gl, canvas, true)
 }
 
 function createCoasterTexture(gl) {
@@ -157,8 +212,7 @@ function createCoasterTexture(gl) {
         ctx.fillRect(x, 18, 8, 8)
         ctx.fillRect(x + 32, 130, 8, 8)
     }
-
-    return createTexture(gl, canvas)
+    return createTexture(gl, canvas, true)
 }
 
 function createTrainTexture(gl) {
@@ -189,8 +243,7 @@ function createTrainTexture(gl) {
         ctx.bezierCurveTo(72, y - 12, 138, y + 12, size, y - 4)
         ctx.stroke()
     }
-
-    return createTexture(gl, canvas)
+    return createTexture(gl, canvas, true)
 }
 
 function createSignTexture(gl) {
@@ -222,7 +275,7 @@ function createSignTexture(gl) {
     ctx.font = '18px sans-serif'
     ctx.fillText('Tokens • Rides • Games', size / 2, 184)
 
-    return createTexture(gl, canvas)
+    return createTexture(gl, canvas, true)
 }
 
 function createBuilding(gl, group, facility, material, textureFactory) {
@@ -239,6 +292,70 @@ function createBuilding(gl, group, facility, material, textureFactory) {
     return mesh
 }
 
+function createBuildingDetails(gl, group, facility, config) {
+    const [width, height, depth] = facility.size
+    const [, y] = facility.pos
+    const orientation = getCenterFacingOrientation(facility)
+    const trimProgram = createSolidProgram(gl, MATERIAL.METAL, config.trimColor)
+    const doorProgram = createSolidProgram(gl, MATERIAL.METAL, config.doorColor)
+    const signProgram = createProgram(gl, {
+        ambient: [0.45, 0.36, 0.52],
+        diffuse: [0.85, 0.74, 0.92],
+        specular: [0.65, 0.58, 0.75],
+        shininess: 72,
+    }, createLabelTexture(gl, config.title, facility.labelZh, config.signColors))
+    const faceWidth = orientation.axis === 'x' ? depth : width
+    const doorWidth = Math.min(faceWidth * 0.34, 3.8)
+    const signWidth = faceWidth * 0.82
+    const signHeight = Math.min(height * 0.38, faceWidth * 0.34)
+
+    createFacadeBox(gl, group, orientation, doorWidth, height * 0.48, 0.18, 0, height * 0.24, doorProgram)
+    createFacadeBox(gl, group, orientation, doorWidth + 0.35, 0.16, 0.22, 0, height * 0.50, trimProgram)
+    createFacadeBox(gl, group, orientation, 0.16, height * 0.50, 0.22, -doorWidth / 2 - 0.08, height * 0.25, trimProgram)
+    createFacadeBox(gl, group, orientation, 0.16, height * 0.50, 0.22, doorWidth / 2 + 0.08, height * 0.25, trimProgram)
+    createFacadeBox(gl, group, orientation, signWidth, signHeight, 0.18, 0, height * 0.78, signProgram)
+
+    const windowProgram = createSolidProgram(gl, MATERIAL.METAL, config.windowColor)
+    const windowY = y + height * 0.54
+    const windowOffset = faceWidth * 0.31
+    createFacadeBox(gl, group, orientation, 1.45, 1.25, 0.14, -windowOffset, windowY, windowProgram)
+    createFacadeBox(gl, group, orientation, 1.45, 1.25, 0.14, windowOffset, windowY, windowProgram)
+}
+
+function getCenterFacingOrientation(facility) {
+    const [width, , depth] = facility.size
+    const [x, , z] = facility.pos
+
+    if (Math.abs(x) > Math.abs(z)) {
+        const normalX = x < 0 ? 1 : -1
+        return {
+            axis: 'x',
+            center: [x + normalX * (width / 2 + 0.04), z],
+            normal: [normalX, 0],
+            tangent: [0, 1],
+        }
+    }
+
+    const normalZ = z < 0 ? 1 : -1
+    return {
+        axis: 'z',
+        center: [x, z + normalZ * (depth / 2 + 0.04)],
+        normal: [0, normalZ],
+        tangent: [1, 0],
+    }
+}
+
+function createFacadeBox(gl, group, orientation, width, height, depth, tangentOffset, y, program) {
+    const size = orientation.axis === 'x' ? [depth, height, width] : [width, height, depth]
+    const position = [
+        orientation.center[0] + orientation.tangent[0] * tangentOffset + orientation.normal[0] * depth / 2,
+        y,
+        orientation.center[1] + orientation.tangent[1] * tangentOffset + orientation.normal[1] * depth / 2,
+    ]
+
+    return createBoxMesh(gl, group, size, position, program)
+}
+
 function createInfoBoard(gl, group) {
     const facility = FACILITIES.INFO_BOARD
     const [width, height, depth] = facility.size
@@ -246,12 +363,26 @@ function createInfoBoard(gl, group) {
     const texture = createSignTexture(gl)
     const program = createProgram(gl, MATERIAL.BUILDING, texture)
     const mesh = new Mesh(gl, { geometry, program })
+    const postProgram = createSolidProgram(gl, MATERIAL.METAL, [0.18, 0.16, 0.19])
 
     mesh.name = 'info-board'
     mesh.position.set(facility.pos[0], facility.pos[1] + height / 2, facility.pos[2])
     mesh.setParent(group)
+    createBoxMesh(gl, group, [0.16, facility.pos[1], 0.16], [facility.pos[0] - width * 0.36, facility.pos[1] / 2, facility.pos[2]], postProgram)
+    createBoxMesh(gl, group, [0.16, facility.pos[1], 0.16], [facility.pos[0] + width * 0.36, facility.pos[1] / 2, facility.pos[2]], postProgram)
 
     return mesh
+}
+
+function createFacilityCollider(facility, padding = 0.35) {
+    return {
+        center: [facility.pos[0], facility.pos[2]],
+        halfSize: [facility.size[0] / 2 + padding, facility.size[2] / 2 + padding],
+    }
+}
+
+function pushCollider(colliders, center, halfSize) {
+    colliders.push({ center, halfSize })
 }
 
 function createBoxMesh(gl, group, size, position, program, rotationY = 0) {
@@ -279,76 +410,90 @@ function createSphereMesh(gl, group, radius, position, program) {
     return mesh
 }
 
-function createLamp(gl, group, x, z) {
+function createLamp(gl, group, colliders, x, z) {
     const metal = createSolidProgram(gl, MATERIAL.METAL, [0.22, 0.20, 0.24])
     const glow = createSolidProgram(gl, MATERIAL.METAL, [1.0, 0.75, 0.36])
     createCylinderMesh(gl, group, { radiusTop: 0.10, radiusBottom: 0.14, height: 4.2, radialSegments: 16 }, [x, 2.1, z], metal)
     createSphereMesh(gl, group, 0.42, [x, 4.45, z], glow)
     createCylinderMesh(gl, group, { radiusTop: 0.34, radiusBottom: 0.52, height: 0.32, radialSegments: 20 }, [x, 0.16, z], metal)
+    pushCollider(colliders, [x, z], [0.55, 0.55])
 }
 
-function createBench(gl, group, x, z, rotationY) {
+function createBench(gl, group, colliders, x, z, rotationY) {
     const wood = createSolidProgram(gl, MATERIAL.BUILDING, [0.52, 0.26, 0.13])
     const metal = createSolidProgram(gl, MATERIAL.METAL, [0.16, 0.15, 0.18])
     createBoxMesh(gl, group, [2.8, 0.22, 0.55], [x, 0.72, z], wood, rotationY)
     createBoxMesh(gl, group, [2.8, 0.22, 0.42], [x, 1.28, z - Math.cos(rotationY) * 0.38], wood, rotationY)
     createBoxMesh(gl, group, [0.16, 0.62, 0.16], [x - Math.cos(rotationY) * 1.05, 0.34, z + Math.sin(rotationY) * 1.05], metal, rotationY)
     createBoxMesh(gl, group, [0.16, 0.62, 0.16], [x + Math.cos(rotationY) * 1.05, 0.34, z - Math.sin(rotationY) * 1.05], metal, rotationY)
+    pushCollider(colliders, [x, z], [1.55, 0.55])
 }
 
-function createPlanter(gl, group, x, z) {
+function createPlanter(gl, group, colliders, x, z) {
     const stone = createSolidProgram(gl, MATERIAL.GROUND, [0.34, 0.28, 0.24])
     const leaf = createSolidProgram(gl, MATERIAL.BUILDING, [0.18, 0.46, 0.25])
     createCylinderMesh(gl, group, { radiusTop: 0.75, radiusBottom: 0.62, height: 0.65, radialSegments: 28 }, [x, 0.32, z], stone)
     createSphereMesh(gl, group, 0.55, [x, 0.88, z], leaf)
     createSphereMesh(gl, group, 0.34, [x + 0.36, 0.95, z - 0.12], leaf)
     createSphereMesh(gl, group, 0.30, [x - 0.28, 1.02, z + 0.24], leaf)
+    pushCollider(colliders, [x, z], [0.85, 0.85])
 }
 
-function createBanner(gl, group, x, z, rotationY, color) {
+function createBanner(gl, group, colliders, x, z, rotationY, color) {
     const pole = createSolidProgram(gl, MATERIAL.METAL, [0.18, 0.17, 0.20])
     const cloth = createSolidProgram(gl, MATERIAL.BUILDING, color)
     createCylinderMesh(gl, group, { radiusTop: 0.07, radiusBottom: 0.08, height: 3.2, radialSegments: 12 }, [x, 1.6, z], pole)
     createBoxMesh(gl, group, [1.2, 1.4, 0.08], [x + Math.sin(rotationY) * 0.45, 2.45, z + Math.cos(rotationY) * 0.45], cloth, rotationY)
+    pushCollider(colliders, [x, z], [0.35, 0.35])
 }
 
-function createDecorations(gl, group) {
+function createDecorations(gl, group, colliders) {
     const lamps = [[-8, -8], [8, -8], [-8, 8], [8, 8], [-20, 4], [20, 4]]
-    for (const [x, z] of lamps) createLamp(gl, group, x, z)
+    for (const [x, z] of lamps) createLamp(gl, group, colliders, x, z)
 
     const benches = [[-6, 5.8, 0], [6, 5.8, 0], [-6, -5.8, Math.PI], [6, -5.8, Math.PI]]
-    for (const [x, z, rotation] of benches) createBench(gl, group, x, z, rotation)
+    for (const [x, z, rotation] of benches) createBench(gl, group, colliders, x, z, rotation)
 
     const planters = [[-11, 0], [11, 0], [0, 11], [0, -11], [-14, 14], [14, 14]]
-    for (const [x, z] of planters) createPlanter(gl, group, x, z)
+    for (const [x, z] of planters) createPlanter(gl, group, colliders, x, z)
 
-    createBanner(gl, group, -15, 9, Math.PI * 0.1, COLORS.NEON_PINK)
-    createBanner(gl, group, 15, 9, -Math.PI * 0.1, COLORS.NEON_CYAN)
-    createBanner(gl, group, -15, -18, Math.PI * 0.1, COLORS.NEON_PURPLE)
-    createBanner(gl, group, 15, -18, -Math.PI * 0.1, [1.0, 0.55, 0.25])
+    createBanner(gl, group, colliders, -15, 9, Math.PI * 0.1, COLORS.NEON_PINK)
+    createBanner(gl, group, colliders, 15, 9, -Math.PI * 0.1, COLORS.NEON_CYAN)
+    createBanner(gl, group, colliders, -15, -18, Math.PI * 0.1, COLORS.NEON_PURPLE)
+    createBanner(gl, group, colliders, 15, -18, -Math.PI * 0.1, [1.0, 0.55, 0.25])
 }
 
 function createTrigger(key) {
     const facility = FACILITIES[key]
+    const orientation = getCenterFacingOrientation(facility)
+
     return {
         facility: facility.label,
-        center: facility.pos,
-        radius: Math.max(facility.trigger.x, facility.trigger.z),
+        center: [
+            orientation.center[0] + orientation.normal[0] * 1.6,
+            facility.pos[1],
+            orientation.center[1] + orientation.normal[1] * 1.6,
+        ],
+        radius: Math.min(facility.trigger.x, facility.trigger.z) * 0.45,
     }
 }
 
 export function createFacilities(gl) {
     const group = new Transform()
     const triggers = []
+    const colliders = []
 
     for (const config of FACILITY_CONFIGS) {
         const facility = FACILITIES[config.key]
         createBuilding(gl, group, facility, config.material, config.texture)
+        createBuildingDetails(gl, group, facility, config)
         triggers.push(createTrigger(config.key))
+        colliders.push(createFacilityCollider(facility))
     }
 
     createInfoBoard(gl, group)
-    createDecorations(gl, group)
+    colliders.push(createFacilityCollider(FACILITIES.INFO_BOARD, 0.25))
+    createDecorations(gl, group, colliders)
 
-    return { group, triggers }
+    return { group, triggers, colliders }
 }

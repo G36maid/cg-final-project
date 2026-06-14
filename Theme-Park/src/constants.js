@@ -16,6 +16,7 @@ export const PLAYER = {
     MOUSE_SENSITIVITY: 0.0022,
     THIRD_PERSON_DISTANCE: 6,
     THIRD_PERSON_HEIGHT: 3,
+    COLLISION_RADIUS: 0.45,
 };
 
 // ===== World =====
@@ -95,8 +96,8 @@ export const FACILITIES = {
         radius: 3.5,
     },
     INFO_BOARD: {
-        pos: [0, 0, 22],
-        size: [5, 3.5, 0.4],
+        pos: [0, 2.6, 10.5],
+        size: [5.0, 3.5, 0.4],
     },
 };
 

@@ -227,6 +227,7 @@ export function createFountain(gl, cubemap) {
     return {
         group,
         base,
+        radius,
         water,
         upperWater,
         update: null,
