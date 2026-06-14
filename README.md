@@ -2,7 +2,9 @@
 
 基於 [OGL](https://github.com/oframe/ogl) 的 3D 主題樂園 meta-game 整合專案。
 
-> **嚴禁引入任何 Three.js 依賴，3D 渲染架構必須強制基於 OGL 進行底層實作。**
+> **無任何 Three.js 或高階依賴，3D 渲染架構基於 OGL 進行底層實作。**
+
+**🎮 線上 Demo：<https://g36maid.github.io/cg-final-project/Theme-Park/>**
 
 ## 概述
 
@@ -29,6 +31,7 @@
 ├ Roller-Coaster/         ← 雲霄飛車（子遊戲）
 ├── Rubik's-Cube/         ← 魔術方塊（子遊戲）
 ├── ogl/                  ← OGL 函式庫原始碼 (v1.0.11, vendored)
+├── report/               ← LaTeX 設計文件（Tectonic build）
 ├── spec/                 ← 課程 spec
 └── original-threejs-plan/← 原始 Three.js 計畫（參考用，不實作）
 ```

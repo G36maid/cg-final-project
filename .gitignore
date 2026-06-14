@@ -1,2 +1,6 @@
+# --- OpenCode / Playwright ---
 .omo/
 .playwright-mcp/
+
+# --- LaTeX build intermediates ---
+report/build/
