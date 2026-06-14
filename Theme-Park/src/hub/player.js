@@ -2,6 +2,7 @@ import { CAMERA, PLAYER } from '../constants.js'
 
 const PITCH_LIMIT = Math.PI * 89 / 180
 const VELOCITY_RESPONSE = 18
+const CONTROL_KEYS = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyC', 'KeyE', 'KeyM'])
 
 export class PlayerController {
     constructor(gl, camera, canvas) {
@@ -138,9 +139,12 @@ export class PlayerController {
         this.yaw -= event.movementX * PLAYER.MOUSE_SENSITIVITY
         this.pitch -= event.movementY * PLAYER.MOUSE_SENSITIVITY
         this.pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, this.pitch))
+        this.syncCamera()
     }
 
     handleKeyDown(event) {
+        if (CONTROL_KEYS.has(event.code)) event.preventDefault()
+
         if (event.code === 'KeyC' && !event.repeat) {
             this.thirdPerson = !this.thirdPerson
             this.syncCamera()
@@ -157,15 +161,21 @@ export class PlayerController {
             return
         }
 
-        if (event.code === 'KeyW' || event.code === 'KeyA' || event.code === 'KeyS' || event.code === 'KeyD') {
+        if (this.isMoveKey(event.code)) {
             this.keys.add(event.code)
         }
     }
 
     handleKeyUp(event) {
-        if (event.code === 'KeyW' || event.code === 'KeyA' || event.code === 'KeyS' || event.code === 'KeyD') {
+        if (CONTROL_KEYS.has(event.code)) event.preventDefault()
+
+        if (this.isMoveKey(event.code)) {
             this.keys.delete(event.code)
         }
+    }
+
+    isMoveKey(code) {
+        return code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD'
     }
 
     syncCamera() {
