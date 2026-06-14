@@ -37,7 +37,7 @@ export class TrackPath {
         }
 
         this._frames = this._path.computeFrenetFrames(TRACK_DIVISIONS, true);
-        alignNonInvertingFramesToWorldUp(this._frames, TRACK_DIVISIONS, CONTROL_POINTS.length, SEGMENTS);
+        alignNonInvertingFramesToWorldUp(this._frames, TRACK_DIVISIONS, CONTROL_POINTS, SEGMENTS, this._path);
 
         const tunnelSeg = SEGMENTS.find((segment) => segment.name === 'tunnel');
         this._tunnelStartFrame = Math.floor((tunnelSeg.startIndex / CONTROL_POINTS.length) * TRACK_DIVISIONS);
