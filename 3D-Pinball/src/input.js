@@ -1,6 +1,6 @@
 // ============================================================================
 // 3D Pinball — Input Handler
-// Keyboard: Z=left flipper, M=right flipper, Space=plunger charge/release.
+// Keyboard: Z=right flipper, M=left flipper, Space=plunger charge/release.
 // ============================================================================
 
 import { FLIPPER, PLUNGER } from './constants.js';
@@ -30,11 +30,11 @@ export class Input {
             switch (e.code) {
                 case 'KeyZ':
                 case 'ArrowLeft':
-                    this.flipperLeft = true;
+                    this.flipperRight = true;
                     break;
                 case 'KeyM':
                 case 'ArrowRight':
-                    this.flipperRight = true;
+                    this.flipperLeft = true;
                     break;
                 case 'Space':
                     if (!this.plungerCharging) {
@@ -50,11 +50,11 @@ export class Input {
             switch (e.code) {
                 case 'KeyZ':
                 case 'ArrowLeft':
-                    this.flipperLeft = false;
+                    this.flipperRight = false;
                     break;
                 case 'KeyM':
                 case 'ArrowRight':
-                    this.flipperRight = false;
+                    this.flipperLeft = false;
                     break;
                 case 'Space':
                     if (this.plungerCharging) {
