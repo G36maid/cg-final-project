@@ -1,8 +1,10 @@
 import { Mesh, Sphere, Vec3 } from '../../ogl/src/index.js';
 import { TUNNEL_HEIGHT, TUNNEL_LIGHT_SPACING, COLORS, MAX_LIGHTS, TRACK_DIVISIONS } from '../config.js';
 
+const MOUNTAIN_RADIUS = 30;
+
 export function createMountain(gl, rockProgram, trackPath) {
-    const geom = new Sphere(gl, { radius: 60, widthSegments: 64, heightSegments: 32 });
+    const geom = new Sphere(gl, { radius: MOUNTAIN_RADIUS, widthSegments: 64, heightSegments: 32 });
     const mesh = new Mesh(gl, { geometry: geom, program: rockProgram });
 
     const startFrame = trackPath.tunnelStartFrame;

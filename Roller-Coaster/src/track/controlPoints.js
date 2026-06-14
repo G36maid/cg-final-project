@@ -53,11 +53,11 @@ export const CONTROL_POINTS = [
     new Vec3(-56, 10, 24),
     new Vec3(-42, 10, 36),
 
-    new Vec3(-32, 8, 44),
-    new Vec3(-42, 6, 56),
-    new Vec3(-54, 4, 48),
-    new Vec3(-58, 3, 30),
-    new Vec3(-58, 2, 6),
+    new Vec3(-48, 7, 32),
+    new Vec3(-54, 4, 24),
+    new Vec3(-58, 3, 12),
+    new Vec3(-59, 2, -6),
+    new Vec3(-58, 2, -24),
     new Vec3(-55, 2, -45),
 ];
 
@@ -69,5 +69,5 @@ export const SEGMENTS = [
     { name: 'tunnel', startIndex: 27, endIndex: 32 },
     { name: 'camelHumps', startIndex: 32, endIndex: 39 },
     { name: 'sCurve', startIndex: 39, endIndex: 44 },
-    { name: 'brakeRun', startIndex: 44, endIndex: 49 },
+    { name: 'brakeRun', startIndex: 44, endIndex: 50 },
 ];
