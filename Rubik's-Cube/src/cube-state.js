@@ -64,7 +64,7 @@ function rotatePosition(pos, axis, turns) {
     let [x, y, z] = pos;
     const times = ((turns % 4) + 4) % 4;
     for (let i = 0; i < times; i++) {
-        if (axis === 0) [y, z] = [z, -y];
+        if (axis === 0) [y, z] = [-z, y];
         else if (axis === 1) [x, z] = [z, -x];
         else [x, y] = [-y, x];
     }
