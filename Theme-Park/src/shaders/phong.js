@@ -10,14 +10,26 @@ export const phongVertex = /* glsl */ `
     uniform mat4 projectionMatrix;
     uniform mat3 normalMatrix;
 
+    uniform mat4 shadowProjectionMatrix;
+    uniform mat4 shadowViewMatrix;
+
     varying vec3 vWorldPos;
     varying vec3 vWorldNormal;
     varying vec2 vUv;
+    varying vec4 vLightNDC;
+
+    const mat4 depthScaleMatrix = mat4(
+        0.5, 0, 0, 0,
+        0, 0.5, 0, 0,
+        0, 0, 0.5, 0,
+        0.5, 0.5, 0.5, 1
+    );
 
     void main() {
         vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
         vWorldNormal = normalize(mat3(modelMatrix) * normal);
         vUv = uv;
+        vLightNDC = depthScaleMatrix * shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
 `;
@@ -44,9 +56,16 @@ export const phongFragment = /* glsl */ `
     uniform sampler2D uMap;
     uniform int uUseMap;
 
+    uniform sampler2D tShadow;
+
     varying vec3 vWorldPos;
     varying vec3 vWorldNormal;
     varying vec2 vUv;
+    varying vec4 vLightNDC;
+
+    float unpackRGBA(vec4 v) {
+        return dot(v, 1.0 / vec4(1.0, 255.0, 65025.0, 16581375.0));
+    }
 
     void main() {
         vec3 N = normalize(vWorldNormal);
@@ -59,10 +78,24 @@ export const phongFragment = /* glsl */ `
 
         vec3 color = uAmbient * baseColor;
 
+        // Shadow calculation
+        float shadow = 1.0;
+        vec3 lightPos = vLightNDC.xyz / vLightNDC.w;
+        float inBounds = step(0.0, lightPos.x) * step(lightPos.x, 1.0)
+                       * step(0.0, lightPos.y) * step(lightPos.y, 1.0);
+        if (inBounds > 0.5) {
+            float bias = 0.002;
+            float depth = lightPos.z - bias;
+            float occluder = unpackRGBA(texture2D(tShadow, lightPos.xy));
+            shadow = mix(0.35, 1.0, step(depth, occluder));
+        }
+
+        // Directional sun with shadow
         vec3 sunL = normalize(-uSunDir);
         float sunDiff = max(dot(N, sunL), 0.0);
-        color += sunDiff * uSunColor * uSunIntensity * baseColor;
+        color += sunDiff * uSunColor * uSunIntensity * baseColor * shadow;
 
+        // Point lights (not shadowed)
         for (int i = 0; i < ${MAX_LIGHTS}; i++) {
             if (i >= uNumLights) break;
 

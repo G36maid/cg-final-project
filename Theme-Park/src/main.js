@@ -1,11 +1,11 @@
-// 黃昏樂園 Dusk Park — 主入口
-// Phase 1: Hub 場景骨架 — Renderer / Camera / Scene / Skybox / Ground / Loop
-
-import { Renderer, Camera, Transform, Plane, Mesh, Program } from '../../ogl/src/index.js';
-import { CAMERA, WORLD, MATERIAL } from './constants.js';
-import { createSkybox } from './hub/skybox.js';
-import { createLightingUniforms, createDefaultTexture } from './hub/lighting.js';
-import { phongVertex, phongFragment } from './shaders/phong.js';
+import { Renderer, Camera, Transform } from '../../ogl/src/index.js';
+import { CAMERA, WORLD } from './constants.js';
+import { createSkybox, createDuskCubemap } from './hub/skybox.js';
+import { createGround } from './geometry/ground.js';
+import { createFacilities } from './hub/facilities.js';
+import { createFountain } from './hub/fountain.js';
+import { PlayerController } from './hub/player.js';
+import { createShadow } from './hub/shadow.js';
 
 class DuskPark {
     constructor() {
@@ -15,8 +15,6 @@ class DuskPark {
     }
 
     init() {
-        // ===== Renderer =====
-        // 使用 index.html 中的 <canvas id="gl">（OGL Renderer 接受 canvas 參數）
         this.renderer = new Renderer({
             canvas: this.canvas,
             dpr: 1,
@@ -25,7 +23,6 @@ class DuskPark {
         this.gl = this.renderer.gl;
         this.gl.clearColor(...WORLD.CLEAR_COLOR);
 
-        // ===== Camera =====
         this.camera = new Camera(this.gl, {
             fov: CAMERA.FOV,
             near: CAMERA.NEAR,
@@ -34,50 +31,45 @@ class DuskPark {
         this.camera.position.set(...CAMERA.INITIAL_POSITION);
         this.camera.lookAt(CAMERA.INITIAL_LOOK_AT);
 
-        // ===== Scene root =====
         this.scene = new Transform();
 
-        // ===== 場景元素（陸續擴充） =====
-        this.buildSkybox();    // T5: 黃昏 cube map 背景
-        this.buildGround();    // 暗色廣場地面（之後升級為貼圖）
+        this.buildScene();
+        this.player = new PlayerController(this.gl, this.camera, this.canvas);
 
-        // ===== 狀態 =====
         this.lastTime = performance.now() / 1000;
         this.running = false;
     }
 
-    // ===== Skybox（T5） =====
-    buildSkybox() {
+    buildScene() {
+        // Shadow system (must be created before Phong meshes)
+        const { shadow, light } = createShadow(this.gl);
+        this.shadow = shadow;
+
         this.skybox = createSkybox(this.gl);
         this.skybox.setParent(this.scene);
-    }
 
-    buildGround() {
-        const geometry = new Plane(this.gl, {
-            width: WORLD.GROUND_SIZE,
-            height: WORLD.GROUND_SIZE,
-        });
-
-        const program = new Program(this.gl, {
-            vertex: phongVertex,
-            fragment: phongFragment,
-            uniforms: {
-                ...createLightingUniforms(),
-                uAmbient: { value: MATERIAL.GROUND.ambient },
-                uDiffuse: { value: MATERIAL.GROUND.diffuse },
-                uSpecular: { value: MATERIAL.GROUND.specular },
-                uShininess: { value: MATERIAL.GROUND.shininess },
-                uUseMap: { value: 0 },
-                uMap: { value: createDefaultTexture(this.gl) },
-            },
-        });
-
-        this.ground = new Mesh(this.gl, { geometry, program });
-        this.ground.rotation.x = -Math.PI / 2;
+        this.ground = createGround(this.gl);
         this.ground.setParent(this.scene);
+        // Ground receives shadows but does not cast
+        shadow.add({ mesh: this.ground, cast: false, receive: true });
+
+        const facilities = createFacilities(this.gl);
+        this.facilityGroup = facilities.group;
+        this.triggers = facilities.triggers;
+        this.facilityGroup.setParent(this.scene);
+        // Buildings cast and receive shadows
+        for (const child of this.facilityGroup.children) {
+            shadow.add({ mesh: child, cast: true, receive: true });
+        }
+
+        this.cubemap = createDuskCubemap(this.gl);
+        const fountain = createFountain(this.gl, this.cubemap);
+        this.fountain = fountain.group;
+        this.fountain.setParent(this.scene);
+        // Fountain base casts and receives shadows; water does not
+        shadow.add({ mesh: fountain.base, cast: true, receive: true });
     }
 
-    // ===== 事件綁定 =====
     bindEvents() {
         window.addEventListener('resize', () => this.onResize());
         document.getElementById('start-btn').addEventListener('click', () => this.start());
@@ -90,7 +82,6 @@ class DuskPark {
         });
     }
 
-    // ===== 啟動（點擊「進入樂園」後） =====
     start() {
         if (this.running) return;
         this.running = true;
@@ -99,7 +90,6 @@ class DuskPark {
         requestAnimationFrame((t) => this.loop(t));
     }
 
-    // ===== 主迴圈 =====
     loop(timestamp) {
         if (!this.running) return;
         requestAnimationFrame((t) => this.loop(t));
@@ -113,14 +103,13 @@ class DuskPark {
     }
 
     update(dt, time) {
-        // Phase 1 後續：玩家控制器、相機切換、動畫
-        // Phase 2 後續：觸發區偵測、HUD 更新
+        this.player.update(dt);
     }
 
     render(time) {
+        this.shadow.render({ scene: this.scene });
         this.renderer.render({ scene: this.scene, camera: this.camera });
     }
 }
 
-// Bootstrap（module script 預設 defer，DOM 已就緒）
 window.duskPark = new DuskPark();
