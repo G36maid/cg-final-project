@@ -2,8 +2,10 @@
 // Phase 1: Hub 場景骨架 — Renderer / Camera / Scene / Skybox / Ground / Loop
 
 import { Renderer, Camera, Transform, Plane, Mesh, Program } from '../../ogl/src/index.js';
-import { CAMERA, WORLD } from './constants.js';
+import { CAMERA, WORLD, MATERIAL } from './constants.js';
 import { createSkybox } from './hub/skybox.js';
+import { createLightingUniforms, createDefaultTexture } from './hub/lighting.js';
+import { phongVertex, phongFragment } from './shaders/phong.js';
 
 class DuskPark {
     constructor() {
@@ -50,34 +52,28 @@ class DuskPark {
         this.skybox.setParent(this.scene);
     }
 
-    // ===== 地面（暫時純色，之後升級為 Phong + texture = T3+T4） =====
     buildGround() {
         const geometry = new Plane(this.gl, {
             width: WORLD.GROUND_SIZE,
             height: WORLD.GROUND_SIZE,
-            widthSegments: 1,
-            heightSegments: 1,
         });
 
         const program = new Program(this.gl, {
-            vertex: /* glsl */ `
-                attribute vec3 position;
-                uniform mat4 modelViewMatrix;
-                uniform mat4 projectionMatrix;
-                void main() {
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragment: /* glsl */ `
-                precision highp float;
-                void main() {
-                    gl_FragColor = vec4(0.12, 0.10, 0.09, 1.0);
-                }
-            `,
+            vertex: phongVertex,
+            fragment: phongFragment,
+            uniforms: {
+                ...createLightingUniforms(),
+                uAmbient: { value: MATERIAL.GROUND.ambient },
+                uDiffuse: { value: MATERIAL.GROUND.diffuse },
+                uSpecular: { value: MATERIAL.GROUND.specular },
+                uShininess: { value: MATERIAL.GROUND.shininess },
+                uUseMap: { value: 0 },
+                uMap: { value: createDefaultTexture(this.gl) },
+            },
         });
 
         this.ground = new Mesh(this.gl, { geometry, program });
-        this.ground.rotation.x = -Math.PI / 2; // 從 XY 平面轉為 XZ 水平面
+        this.ground.rotation.x = -Math.PI / 2;
         this.ground.setParent(this.scene);
     }
 
