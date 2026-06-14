@@ -1,5 +1,7 @@
 # Final Project Spec
 
+此 spec 為去年 CSU0021 電腦圖學的，僅供參考
+
 CSU0021: Computer Graphics
 
 ## Overview
