@@ -166,6 +166,7 @@ export class Game {
         this.softDropActive = false;
         if (this.onStateChange) this.onStateChange('gameover');
         if (this.onGameOver) this.onGameOver();
+        window.dispatchEvent(new CustomEvent('dusk-park-gameover', { detail: { lines: this.score.lines } }));
     }
 
     getNextQueue(n = 3) {

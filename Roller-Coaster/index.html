@@ -15,6 +15,39 @@
 <body>
     <canvas id="gl"></canvas>
     <canvas id="hud"></canvas>
+    <script>
+    (function() {
+        var params = new URLSearchParams(location.search);
+        if (params.get('from') !== 'hub') return;
+        var btn = document.createElement('button');
+        btn.textContent = '↩ 返回樂園';
+        Object.assign(btn.style, {
+            position: 'fixed', top: '16px', right: '16px',
+            padding: '8px 16px', background: 'rgba(20,15,35,0.85)',
+            border: '1px solid rgba(255,180,120,0.5)', borderRadius: '6px',
+            color: '#ffb878', fontSize: '14px', cursor: 'pointer', zIndex: '1000',
+            fontFamily: 'sans-serif'
+        });
+        btn.addEventListener('click', function() {
+            try {
+                var raw = localStorage.getItem('dusk-park-state');
+                var state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
+                state.coasterRides = (state.coasterRides || 0) + 1;
+                localStorage.setItem('dusk-park-state', JSON.stringify(state));
+            } catch(_) {}
+            location.href = '../Theme-Park/index.html';
+        });
+        document.body.appendChild(btn);
+        window.addEventListener('dusk-park-coaster-complete', function() {
+            try {
+                var raw = localStorage.getItem('dusk-park-state');
+                var state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
+                state.coasterRides = (state.coasterRides || 0) + 1;
+                localStorage.setItem('dusk-park-state', JSON.stringify(state));
+            } catch(_) {}
+        });
+    })();
+    </script>
     <script type="module" src="main.js"></script>
 </body>
 </html>

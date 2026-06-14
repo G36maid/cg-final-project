@@ -250,11 +250,12 @@ class PinballGame {
         this.audio.gameOver();
         this.ui.showGameOver(this.score.score);
 
-        // Change light strips to red
         if (this.stripProgram) {
             this.stripProgram.uniforms.uColor.value.set(...COLORS.LIGHT_STRIP_RED);
             this.stripProgram.uniforms.uPulse.value = 1;
         }
+
+        window.dispatchEvent(new CustomEvent('dusk-park-gameover', { detail: { score: this.score.score } }));
     }
 
     // ── Main Loop ───────────────────────────────────────────────────────

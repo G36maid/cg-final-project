@@ -59,6 +59,7 @@ import { solveCube } from './solver.js';
         if (cubeState.isSolved() && moveHistory.length > 0) {
             ui.stopTimer();
             celebration.trigger();
+            window.dispatchEvent(new CustomEvent('dusk-park-solved'));
         }
     };
 
