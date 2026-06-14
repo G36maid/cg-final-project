@@ -3,11 +3,16 @@ export class HUD {
         this.ctx = canvas.getContext('2d');
         this.w = 0;
         this.h = 0;
+        this.paused = false;
     }
 
     resize(w, h) {
         this.w = w;
         this.h = h;
+    }
+
+    setPaused(p) {
+        this.paused = !!p;
     }
 
     update({ speed = 0, height = 0, gForce = 0, completion = 0, mode = 1 } = {}) {
@@ -55,5 +60,15 @@ export class HUD {
         ctx.fillText(`Track:    ${completionPct}%`, textX, modeY + lineGap * 4);
 
         ctx.restore();
+
+        if (this.paused) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(255, 80, 80, 0.85)';
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⏸ PAUSED  (press P to resume)', w / 2, 24);
+            ctx.restore();
+        }
     }
 }

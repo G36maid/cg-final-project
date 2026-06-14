@@ -96,6 +96,12 @@ const hud = new HUD({ canvas: hudCanvas });
 
 const cameraRig = new CameraRig(gl, camera, trackSampler, input);
 
+let paused = false;
+input.onPauseToggle(() => {
+    paused = !paused;
+    hud.setPaused(paused);
+});
+
 function resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -124,7 +130,7 @@ function update(time) {
     const dt = Math.min(0.05, lastTime ? elapsedTime - lastTime : 0);
     lastTime = elapsedTime;
 
-    physics.update(dt);
+    physics.update(paused ? 0 : dt);
     car.update(physics);
     cameraRig.update(dt, physics);
 

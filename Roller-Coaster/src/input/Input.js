@@ -5,6 +5,7 @@ export class Input {
         this.mouseDownCallback = null;
         this.mouseMoveCallback = null;
         this.mouseUpCallback = null;
+        this.pauseCallback = null;
 
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onMouseDown = this._onMouseDown.bind(this);
@@ -19,6 +20,10 @@ export class Input {
 
     onModeChange(callback) {
         this.modeCallback = callback;
+    }
+
+    onPauseToggle(callback) {
+        this.pauseCallback = callback;
     }
 
     onMouseDown(callback) {
@@ -44,6 +49,9 @@ export class Input {
         const mode = Number(event.key);
         if (mode >= 1 && mode <= 5 && this.modeCallback) {
             this.modeCallback(mode);
+        }
+        if ((event.key === 'p' || event.key === 'P') && this.pauseCallback) {
+            this.pauseCallback();
         }
     }
 
