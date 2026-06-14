@@ -240,13 +240,13 @@ Theme-Park/
 
 ## 10. 執行方式
 
-從 `Theme-Park/` 目錄下：
+從 repo 根目錄執行，讓 Hub 與所有子遊戲都在同一個 server root 下：
 
 ```sh
-miniserve .
+miniserve . -p 8765 --index index.html
 ```
 
-純 ES modules，瀏覽器直接載入，無 build step。
+瀏覽器開啟 `http://localhost:8765/Theme-Park/`。純 ES modules，瀏覽器直接載入，無 build step。
 
 ## 11. 與既有子遊戲的整合協議
 
