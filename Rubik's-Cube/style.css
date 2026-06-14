@@ -1,0 +1,203 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #1a1a2e;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #e8ecf4;
+    user-select: none;
+}
+
+#glcanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+#glcanvas:active {
+    cursor: grabbing;
+}
+
+/* Top bar */
+#top-bar {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    z-index: 10;
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 28px;
+}
+
+#timer {
+    font-size: 28px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    color: #e8ecf4;
+    letter-spacing: 1px;
+}
+
+#moves-display {
+    font-size: 14px;
+    color: #6a7a8a;
+    font-weight: 500;
+}
+
+#moves-count {
+    color: #e8ecf4;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Control buttons */
+#controls {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+#controls button {
+    background: rgba(26, 26, 46, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 22px;
+    color: #e8ecf4;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#controls button:hover:not(:disabled) {
+    background: rgba(78, 205, 196, 0.2);
+    border-color: #4ecdc4;
+    color: #4ecdc4;
+}
+
+#controls button:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+#controls button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+#btn-scramble {
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+#btn-scramble:hover:not(:disabled) {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+#btn-solve {
+    border-color: rgba(78, 205, 196, 0.3);
+}
+
+#btn-solve:hover:not(:disabled) {
+    background: rgba(78, 205, 196, 0.2);
+    border-color: #4ecdc4;
+    color: #4ecdc4;
+}
+
+/* Formula bars */
+.formula-bar {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    max-width: 600px;
+    z-index: 10;
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+#scramble-bar {
+    bottom: 80px;
+}
+
+#solution-bar {
+    bottom: 80px;
+}
+
+.formula-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6a7a8a;
+    margin-bottom: 4px;
+}
+
+.formula-text {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    word-spacing: 4px;
+    min-height: 20px;
+}
+
+.formula-text .executed {
+    color: #6a7a8a;
+}
+
+.formula-text .current {
+    color: #4ecdc4;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(78, 205, 196, 0.4);
+}
+
+.formula-text .pending {
+    color: #e8ecf4;
+}
+
+/* 2D Cube net */
+#net-canvas {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+/* Hint text */
+#hint {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+    font-size: 11px;
+    color: #6a7a8a;
+    z-index: 10;
+    opacity: 0.6;
+}

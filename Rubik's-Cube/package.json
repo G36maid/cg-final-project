@@ -1,0 +1,10 @@
+{
+    "name": "rubiks-cube-ogl",
+    "version": "1.0.0",
+    "description": "3D Rubik's Cube built with OGL (WebGL)",
+    "type": "module",
+    "scripts": {
+        "test": "node --test tests/*.test.js",
+        "serve": "npx http-server . -p 3000 -c-1 --cors"
+    }
+}
