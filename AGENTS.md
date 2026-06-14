@@ -107,7 +107,7 @@ Only add integration hooks at score/exit points. Sub-game physics and rendering 
 
 ## Key constants and conventions
 
-- **Token economy**: Defined in `src/constants.js` → `ECONOMY`. Coaster costs 20 tokens, 3 rides = soft win.
+- **Token economy**: Defined in `src/constants.js` → `ECONOMY`. Coaster costs 10 tokens, arcade games pay flat 10 tokens each, 3 rides = soft win.
 - **Color palette**: Dusk theme — warm orange/gold sun, cool purple sky, neon pink/cyan accents. All in `constants.js` → `COLORS`.
 - **Phong shader**: 8 point lights max (`MAX_LIGHTS = 8` in `shaders/phong.js`). Uniforms use base name (no `[0]` suffix) with regular `Array` (not `Float32Array`) — see DEVLOG.
 - **State key**: `localStorage` key is `'dusk-park-state'` and must stay consistent across hub and all sub-games.

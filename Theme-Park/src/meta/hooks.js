@@ -13,7 +13,7 @@ export function isFromHub() {
 }
 
 export function getHubURL() {
-    return '../Theme-Park/index.html'
+    return '../Theme-Park/index.html?from=subgame'
 }
 
 export function returnToHub() {
@@ -63,19 +63,7 @@ export function recordGamePlayed(game) {
     return state
 }
 
-export function getPayoutForPinball(score) {
-    return Math.floor(score * ECONOMY.PAYOUTS.PINBALL_RATIO)
-}
-
-export function getPayoutForRubiks() {
-    return ECONOMY.PAYOUTS.RUBIKS_BASE
-}
-
-export function getPayoutForTetris(linesCleared) {
-    return linesCleared * ECONOMY.PAYOUTS.TETRIS_PER_LINE
-}
-
-export function injectBackButton() {
+export function injectBackButton(onBeforeReturn) {
     if (!isFromHub()) return null
 
     const btn = document.createElement('button')
@@ -95,7 +83,35 @@ export function injectBackButton() {
         zIndex: '1000',
         fontFamily: 'sans-serif',
     })
-    btn.addEventListener('click', returnToHub)
+    btn.addEventListener('click', () => {
+        if (typeof onBeforeReturn === 'function') onBeforeReturn()
+        returnToHub()
+    })
     document.body.appendChild(btn)
     return btn
 }
+
+export function showPayoutToast(amount) {
+    const info = document.createElement('div')
+    Object.assign(info.style, {
+        position: 'fixed',
+        bottom: '60px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        padding: '12px 24px',
+        background: 'rgba(20, 15, 35, 0.9)',
+        borderRadius: '8px',
+        border: '1px solid rgba(255, 180, 120, 0.5)',
+        color: '#ffb878',
+        fontSize: '18px',
+        fontWeight: '700',
+        zIndex: '1001',
+        fontFamily: 'sans-serif',
+        textAlign: 'center',
+    })
+    info.textContent = `+ ${amount} Tokens`
+    document.body.appendChild(info)
+    setTimeout(() => { info.remove() }, 3000)
+}
+
+export { ECONOMY }

@@ -18,6 +18,9 @@ class DuskPark {
         this.canvas = document.getElementById('gl');
         this.init();
         this.bindEvents();
+        if (cameFromSubGame()) {
+            this.start();
+        }
     }
 
     init() {

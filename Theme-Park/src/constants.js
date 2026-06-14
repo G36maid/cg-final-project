@@ -101,15 +101,11 @@ export const FACILITIES = {
     },
 };
 
-// ===== Token 經濟 =====
+// ===== Token 經濟（Demo 調校：3 場 arcade + 3 趟 coaster 即可通關） =====
 export const ECONOMY = {
-    COASTER_COST: 20,
+    COASTER_COST: 10,
     WIN_RIDES: 3,
-    PAYOUTS: {
-        PINBALL_RATIO: 0.01, // 100 分 = 1 token
-        RUBIKS_BASE: 30,
-        TETRIS_PER_LINE: 3,
-    },
+    ARCADE_FLAT_PAYOUT: 10,
 };
 
 // ===== Phong 材質預設值 =====

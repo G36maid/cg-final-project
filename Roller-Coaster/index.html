@@ -15,39 +15,11 @@
 <body>
     <canvas id="gl"></canvas>
     <canvas id="hud"></canvas>
-    <script>
-    (() => {
-        const params = new URLSearchParams(location.search);
-        if (params.get('from') !== 'hub') return;
-        const btn = document.createElement('button');
-        btn.id = 'back-to-hub';
-        btn.textContent = '↩ 返回樂園';
-        Object.assign(btn.style, {
-            position: 'fixed', top: '16px', right: '16px',
-            padding: '8px 16px', background: 'rgba(20,15,35,0.85)',
-            border: '1px solid rgba(255,180,120,0.5)', borderRadius: '6px',
-            color: '#ffb878', fontSize: '14px', cursor: 'pointer', zIndex: '1000',
-            fontFamily: 'sans-serif'
-        });
-        btn.addEventListener('click', () => {
-            try {
-                const raw = localStorage.getItem('dusk-park-state');
-                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
-                state.coasterRides = (state.coasterRides || 0) + 1;
-                localStorage.setItem('dusk-park-state', JSON.stringify(state));
-            } catch(_) {}
-            location.href = '../Theme-Park/index.html';
-        });
-        document.body.appendChild(btn);
-        window.addEventListener('dusk-park-coaster-complete', () => {
-            try {
-                const raw = localStorage.getItem('dusk-park-state');
-                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
-                state.coasterRides = (state.coasterRides || 0) + 1;
-                localStorage.setItem('dusk-park-state', JSON.stringify(state));
-            } catch(_) {}
-        });
-    })();
+    <script type="module">
+    import { isFromHub, injectBackButton, recordCoasterRide } from '../Theme-Park/src/meta/hooks.js';
+    if (isFromHub()) {
+        injectBackButton(() => recordCoasterRide());
+    }
     </script>
     <script type="module" src="main.js"></script>
 </body>

@@ -39,44 +39,17 @@
     <div id="overlay">
         <div id="overlay-text">PAUSED</div>
     </div>
-    <script>
-    (() => {
-        const params = new URLSearchParams(location.search);
-        if (params.get('from') !== 'hub') return;
-        const btn = document.createElement('button');
-        btn.id = 'back-to-hub';
-        btn.textContent = '↩ 返回樂園';
-        Object.assign(btn.style, {
-            position: 'fixed', top: '16px', right: '16px',
-            padding: '8px 16px', background: 'rgba(20,15,35,0.85)',
-            border: '1px solid rgba(255,180,120,0.5)', borderRadius: '6px',
-            color: '#ffb878', fontSize: '14px', cursor: 'pointer', zIndex: '1000',
-            fontFamily: 'sans-serif'
+    <script type="module">
+    import { isFromHub, injectBackButton, addTokens, recordGamePlayed, showPayoutToast, ECONOMY } from '../Theme-Park/src/meta/hooks.js';
+    if (isFromHub()) {
+        injectBackButton();
+        window.addEventListener('dusk-park-gameover', () => {
+            const payout = ECONOMY.ARCADE_FLAT_PAYOUT;
+            addTokens(payout);
+            recordGamePlayed('tetris');
+            showPayoutToast(payout);
         });
-        btn.addEventListener('click', () => { location.href = '../Theme-Park/index.html'; });
-        document.body.appendChild(btn);
-        window.addEventListener('dusk-park-gameover', (e) => {
-            const lines = e.detail.lines || 0;
-            const payout = lines * 3;
-            try {
-                const raw = localStorage.getItem('dusk-park-state');
-                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
-                state.tokens += payout;
-                state.gamesPlayed.tetris = (state.gamesPlayed.tetris || 0) + 1;
-                localStorage.setItem('dusk-park-state', JSON.stringify(state));
-            } catch(_) {}
-            const info = document.createElement('div');
-            Object.assign(info.style, {
-                position: 'fixed', bottom: '60px', left: '50%', transform: 'translateX(-50%)',
-                padding: '12px 24px', background: 'rgba(20,15,35,0.9)', borderRadius: '8px',
-                border: '1px solid rgba(255,180,120,0.5)', color: '#ffb878', fontSize: '18px',
-                fontWeight: '700', zIndex: '1001', fontFamily: 'sans-serif', textAlign: 'center'
-            });
-            info.textContent = `+ ${payout} Tokens`;
-            document.body.appendChild(info);
-            setTimeout(() => { info.remove(); }, 3000);
-        });
-    })();
+    }
     </script>
     <script type="module" src="src/main.js"></script>
 </body>

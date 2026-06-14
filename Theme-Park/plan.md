@@ -84,11 +84,11 @@
 
 | 設施 | Token 流動 | 觸發點 |
 |---|---|---|
-| Pinball | 分數 → tokens（100 分 = 1 token） | 球漏 / game over 時結算上繳 |
-| Rubik's Cube | 解開給 30 tokens + 步數 bonus | 偵測 solved 時 |
-| 3D-Tetris | 消行換（1 行 = 3 tokens） | 每次消行立即累積，game over 結算 |
+| Pinball | 完成一場固定 10 tokens | game over 時結算上繳 |
+| Rubik's Cube | 解開固定 10 tokens | 偵測 solved 時 |
+| 3D-Tetris | 完成一場固定 10 tokens | game over 時結算 |
 | Tour Train | 免費 | — |
-| Coaster | 每趟花 20 tokens | 進站時扣款 |
+| Coaster | 每趟花 10 tokens | 進站時扣款 |
 
 ### 目標與進度
 
