@@ -74,10 +74,11 @@
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/theme-park-hub.png}
-  \caption{The Dusk Park hub at golden hour. The player stands in the central plaza with the
-  reflecting fountain (T6), procedurally textured buildings, warm lamp point lights (T3), the
-  dusk-gradient skybox (T5), and long dramatic shadows cast by the directional sun (T7).}
-  \label{fig:hub}
+  \caption{The Dusk Park meta-game at golden hour. The player stands in the central plaza
+  with the reflecting fountain (T6), procedurally textured buildings, warm lamp point lights
+  (T3), the dusk-gradient skybox (T5), and long dramatic shadows cast by the directional sun
+  (T7).}
+  \label{fig:metagame}
 \end{figure}
 
 \tableofcontents
@@ -98,7 +99,7 @@ simple and clearly communicated to the player through the HUD and an information
   After three rides the tour is ``complete'' and a fireworks celebration plays.}
 \end{quote}
 
-The hub itself is a first-person walkthrough scene that concentrates every hard graphics
+The meta-game itself is a first-person walkthrough scene that concentrates every hard graphics
 requirement of the course spec (T1--T7): player movement, first/third-person camera, Phong
 point lights, textured surfaces, a skybox cubemap, cubemap reflection on the fountain
 water, and shadow mapping. The sub-games are integrated through page navigation and
@@ -107,7 +108,7 @@ gameplay intact.
 
 The experience we want the player to have is one of \emph{wandering a park caught between
 day and night}. Dusk is the narrative metaphor: the park sits at the boundary of reality
-(the hub) and the game universes behind each door, and the warm light makes every graphics
+(the meta-game) and the game universes behind each door, and the warm light makes every graphics
 technique read clearly on screen.
 
 % =====================================================================
@@ -136,7 +137,7 @@ visible and dramatic:
 
 The palette (Table~\ref{tab:palette}) is built around a warm-cool tension: warm
 orange/gold for the sun and lamps, cool purple/indigo for the sky and ambient, and
-saturated neon pink/cyan as accents that bridge the hub to the arcade interiors.
+saturated neon pink/cyan as accents that bridge the meta-game to the arcade interiors.
 
 \begin{table}[H]
   \centering
@@ -460,18 +461,18 @@ SDF shaders and Bloom post-processing, and a Roller Coaster to tackle Catmull-Ro
 splines and Frenet--Serret framing. Each was a self-contained playground that explored a
 different corner of real-time computer graphics.
 
-The insight that turned four demos into one game was the \textbf{theme-park hub}. Instead
+The insight that turned four demos into one game was the \textbf{theme-park meta-game}. Instead
 of discarding the prototypes or rewriting them into a single renderer (an engineering
 nightmare with four independent OGL scenes), we asked: what if the park itself \emph{is}
 the integration layer? A first-person plaza where each door leads to a different game
-universe, connected by a shared token economy and a persistent save state. The hub then
+universe, connected by a shared token economy and a persistent save state. The meta-game then
 becomes the single place where every hard graphics requirement---skybox, Phong point
 lights, shadow mapping, cubemap reflection, textured surfaces, camera control---is
 concentrated and shown off at dusk, the one lighting condition where they all read
 simultaneously.
 
 So the real achievement is the \emph{architecture}: the four games kept their original
-physics, rendering, and gameplay untouched, and the hub glued them together with nothing
+physics, rendering, and gameplay untouched, and the meta-game glued them together with nothing
 more than page navigation, \texttt{localStorage}, and a shared hooks module. What was
 originally ``four ways to explore a library'' became \emph{Dusk Park}---one cohesive game
 where the player earns tokens in an arcade, spends them on a coaster ride, and watches

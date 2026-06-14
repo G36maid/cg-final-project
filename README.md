@@ -8,13 +8,13 @@
 
 ## 概述
 
-本專案是一個 3D 主題樂園 hub（黃昏樂園），玩家在黃昏時分的樂園廣場漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺取代幣（Tokens），再花費代幣搭乘雲霄飛車。Hub 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻；四個子遊戲透過頁面切換整合，保留各自原有玩法。
+本專案是一個 3D 主題樂園 meta-game（黃昏樂園），玩家在黃昏時分的樂園廣場漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺取代幣（Tokens），再花費代幣搭乘雲霄飛車。Meta-game 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻；四個子遊戲透過頁面切換整合，保留各自原有玩法。
 
 ## 目錄結構
 
 ```
-├── Theme-Park/          ← 黃昏樂園 Hub（本 branch 主要開發標的）
-│   ├── index.html          Hub 入口
+├── Theme-Park/          ← 黃昏樂園 Meta-game（本 branch 主要開發標的）
+│   ├── index.html          Meta-game 入口
 │   ├── styles.css          全域樣式
 │   ├── plan.md             權威 spec（必讀）
 │   ├── DEVLOG.md           開發踩坑記錄
@@ -52,8 +52,8 @@ miniserve . -p 8765 --index index.html
 
 子遊戲透過頁面切換（page navigation）整合，不是在 WebGL 裡嵌入：
 
-- **Hub → 子遊戲**：`location.href = '../3D-Pinball/index.html?from=hub'`
-- **子遊戲 → Hub**：`hooks.returnToHub()` → fade 過渡 → 回到樂園
+- **Meta-game → 子遊戲**：`location.href = '../3D-Pinball/index.html?from=hub'`
+- **子遊戲 → Meta-game**：`hooks.returnToHub()` → fade 過渡 → 回到樂園
 - **Token 狀態**：所有交易經 `localStorage['dusk-park-state']`
 - **返回按鈕**：`hooks.injectBackButton()` 在子遊戲右上角注入「↩ 返回樂園」
 
@@ -63,19 +63,19 @@ miniserve . -p 8765 --index index.html
 
 | Spec 項 | 實作位置 |
 |---|---|
-| T1 玩家滑鼠+鍵盤移動/旋轉 | Hub — WASD + pointer lock |
-| T2 有意義的相機控制 | Hub — C 鍵切換第一/第三人稱 |
-| T3 點光源 + Phong | Hub — 路燈點光源 + directional sun fill |
-| T4 材質貼圖 | Hub — 石板地面 UV tile + 建物程序貼圖 |
-| T5 Skybox | Hub — 黃昏程序 cubemap, 500³ |
-| T6 Cube map 反射 | Hub 噴泉水面 Fresnel 反射 |
-| T7 Shadow mapping | Hub — 2048² depth map + 建物陰影 |
+| T1 玩家滑鼠+鍵盤移動/旋轉 | Meta-game — WASD + pointer lock |
+| T2 有意義的相機控制 | Meta-game — C 鍵切換第一/第三人稱 |
+| T3 點光源 + Phong | Meta-game — 路燈點光源 + directional sun fill |
+| T4 材質貼圖 | Meta-game — 石板地面 UV tile + 建物程序貼圖 |
+| T5 Skybox | Meta-game — 黃昏程序 cubemap, 500³ |
+| T6 Cube map 反射 | Meta-game 噴泉水面 Fresnel 反射 |
+| T7 Shadow mapping | Meta-game — 2048² depth map + 建物陰影 |
 
 ## 遊戲專案
 
 | 專案 | 說明 |
 |---|---|
-| **黃昏樂園 (Theme-Park)** | Hub meta-game：第一人稱漫遊、代幣經濟、子遊戲導航 |
+| **黃昏樂園 (Theme-Park)** | Meta-game：第一人稱漫遊、代幣經濟、子遊戲導航 |
 | **3D Pinball** | 深色街機霓虹風格彈珠台，含 Bloom、PBR、自訂物理 |
 | **3D Tetris** | 3D 俄羅斯方塊（WIP） |
 | **Roller Coaster** | Catmull-Rom 軌道、Frenet-Serret 相機 |
