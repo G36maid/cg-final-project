@@ -18,7 +18,6 @@ export class PlayerController {
         this.yaw = 0
         this.pitch = 0
         this.velocity = [0, 0, 0]
-        this.collisionObstacles = []
         this.keys = new Set()
         this.locked = document.pointerLockElement === this.canvas
         this.thirdPerson = false
@@ -81,7 +80,9 @@ export class PlayerController {
         this.velocity[1] = 0
         this.velocity[2] += (targetVelocity[2] - this.velocity[2]) * blend
 
-        this.moveWithCollision(this.velocity[0] * dt, this.velocity[2] * dt)
+        this.playerPosition[0] += this.velocity[0] * dt
+        this.playerPosition[1] = 0
+        this.playerPosition[2] += this.velocity[2] * dt
 
         this.syncCamera()
     }
@@ -105,10 +106,6 @@ export class PlayerController {
 
     get isThirdPerson() {
         return this.thirdPerson
-    }
-
-    setCollisionObstacles(obstacles) {
-        this.collisionObstacles = obstacles
     }
 
     destroy() {
@@ -179,41 +176,6 @@ export class PlayerController {
 
     isMoveKey(code) {
         return code === 'KeyW' || code === 'KeyA' || code === 'KeyS' || code === 'KeyD'
-    }
-
-    moveWithCollision(deltaX, deltaZ) {
-        this.playerPosition[0] += deltaX
-        this.resolveCollisions('x')
-        this.playerPosition[2] += deltaZ
-        this.resolveCollisions('z')
-        this.playerPosition[1] = 0
-    }
-
-    resolveCollisions(axis) {
-        const radius = PLAYER.COLLISION_RADIUS
-
-        for (const obstacle of this.collisionObstacles) {
-            const minX = obstacle.center[0] - obstacle.halfSize[0] - radius
-            const maxX = obstacle.center[0] + obstacle.halfSize[0] + radius
-            const minZ = obstacle.center[1] - obstacle.halfSize[1] - radius
-            const maxZ = obstacle.center[1] + obstacle.halfSize[1] + radius
-            const x = this.playerPosition[0]
-            const z = this.playerPosition[2]
-
-            if (x < minX || x > maxX || z < minZ || z > maxZ) continue
-
-            if (axis === 'x') {
-                const leftPush = Math.abs(x - minX)
-                const rightPush = Math.abs(maxX - x)
-                this.playerPosition[0] = leftPush < rightPush ? minX : maxX
-                this.velocity[0] = 0
-            } else {
-                const backPush = Math.abs(z - minZ)
-                const frontPush = Math.abs(maxZ - z)
-                this.playerPosition[2] = backPush < frontPush ? minZ : maxZ
-                this.velocity[2] = 0
-            }
-        }
     }
 
     syncCamera() {
