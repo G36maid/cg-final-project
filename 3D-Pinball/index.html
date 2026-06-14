@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>3D Pinball — Neon Arcade</title>
+    <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+    <!-- ── HUD Overlay ─────────────────────────────────────────────── -->
+    <div id="hud">
+        <!-- Score -->
+        <div id="hud-score-label">SCORE</div>
+        <div id="hud-score">0</div>
+
+        <!-- Ball Icons -->
+        <div id="hud-balls"></div>
+
+        <!-- Multiplier -->
+        <div id="hud-multiplier">1.0x</div>
+
+        <!-- Floating Messages -->
+        <div id="hud-messages"></div>
+
+        <!-- Ball Save Timer -->
+        <div id="hud-ballsave"></div>
+
+        <!-- Plunger Power Bar -->
+        <div id="hud-plunger">
+            <div id="hud-plunger-bar"></div>
+        </div>
+
+        <!-- ── Title Screen ──────────────────────────────────────────── -->
+        <div id="hud-title">
+            <h1>NEON PINBALL</h1>
+            <h2>3D ARCADE</h2>
+            <div class="controls">
+                <span>Z</span> — Left Flipper &nbsp;·&nbsp;
+                <span>M</span> — Right Flipper<br>
+                <span>SPACE</span> — Hold to Charge Plunger / Release to Launch
+            </div>
+            <button id="hud-start">INSERT COIN</button>
+        </div>
+
+        <!-- ── Game Over Screen ─────────────────────────────────────── -->
+        <div id="hud-gameover">
+            <h1>GAME OVER</h1>
+            <p>FINAL SCORE</p>
+            <div id="hud-gameover-score">0</div>
+            <button id="hud-restart">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <!-- ── Game Script ─────────────────────────────────────────────── -->
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
