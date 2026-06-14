@@ -1,0 +1,65 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { overflow: hidden; background: #080810; font-family: 'Segoe UI', system-ui, sans-serif; }
+canvas { display: block; }
+
+#hud {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    display: flex; justify-content: space-between; padding: 20px;
+    z-index: 10;
+}
+
+#info-left, #info-right {
+    display: flex; flex-direction: column; gap: 12px;
+}
+
+.hud-panel {
+    background: rgba(10, 15, 35, 0.75);
+    border: 1px solid rgba(60, 80, 140, 0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    backdrop-filter: blur(8px);
+}
+
+.hud-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    color: rgba(140, 160, 200, 0.6);
+}
+
+.hud-value {
+    font-size: 28px; font-weight: 700; color: #e0e8ff;
+    font-variant-numeric: tabular-nums;
+}
+
+.hud-pieces {
+    display: flex; gap: 8px; margin-top: 4px;
+}
+
+.piece-badge {
+    font-size: 20px; font-weight: 800;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.piece-badge.dim { color: rgba(100, 120, 160, 0.3) !important; text-shadow: none; }
+
+#controls-hint {
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: rgba(140, 160, 200, 0.4);
+    pointer-events: none; z-index: 10;
+    white-space: nowrap;
+}
+
+#overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; z-index: 20;
+}
+#overlay.visible { opacity: 1; }
+
+#overlay-text {
+    font-size: 48px; font-weight: 900; color: #e0e8ff;
+    text-shadow: 0 0 30px rgba(80, 120, 200, 0.6);
+    letter-spacing: 4px;
+}

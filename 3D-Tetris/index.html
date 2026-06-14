@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Tetris</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="hud">
+        <div id="info-left">
+            <div class="hud-panel">
+                <div class="hud-label">SCORE</div>
+                <div id="score" class="hud-value">0</div>
+            </div>
+            <div class="hud-panel">
+                <div class="hud-label">LEVEL</div>
+                <div id="level" class="hud-value">1</div>
+            </div>
+            <div class="hud-panel">
+                <div class="hud-label">LINES</div>
+                <div id="lines" class="hud-value">0</div>
+            </div>
+        </div>
+        <div id="info-right">
+            <div class="hud-panel">
+                <div class="hud-label">NEXT</div>
+                <div id="next" class="hud-pieces"></div>
+            </div>
+            <div class="hud-panel">
+                <div class="hud-label">HOLD</div>
+                <div id="hold" class="hud-pieces"></div>
+            </div>
+        </div>
+    </div>
+    <div id="controls-hint">
+        ←→ Move X · ↑↓ Move Z · Q/E Rot Y · W/S Rot X · A/D Rot Z · Space Hard Drop · Shift Soft Drop · C Hold · P Pause · R Restart
+    </div>
+    <div id="overlay">
+        <div id="overlay-text">PAUSED</div>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
