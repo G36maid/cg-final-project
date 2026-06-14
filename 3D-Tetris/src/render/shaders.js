@@ -110,8 +110,8 @@ void main() {
     vec3 viewDir = normalize(vViewPosition);
     float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.0);
     float pulse = 0.5 + 0.5 * sin(uTime * 2.0);
-    float alpha = (0.15 + 0.1 * sin(uTime * 2.0)) * bodyFill;
-    vec3 color = uColor * (0.3 + 0.3 * pulse + fresnel * 0.45 + edgeGlow);
+    float alpha = max(bodyFill * 0.15, edgeGlow * 0.8);
+    vec3 color = uColor * (0.4 + 0.3 * pulse + fresnel * 0.3 + edgeGlow);
 
     gl_FragColor = vec4(color, alpha);
 }
