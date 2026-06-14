@@ -346,7 +346,6 @@ html, body {
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s;
-    pointer-events: all;
 }
 
 #loader .start-btn:hover {
