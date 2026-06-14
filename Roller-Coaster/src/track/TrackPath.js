@@ -1,6 +1,7 @@
 import { Curve, Path, Vec3 } from '../../ogl/src/index.js';
 import { CONTROL_POINTS, SEGMENTS } from './controlPoints.js';
 import { TRACK_DIVISIONS } from '../config.js';
+import { alignNonInvertingFramesToWorldUp } from '../math/framePostProcess.js';
 
 const CATMULL_ROM_DIVISIONS = 12;
 
@@ -36,6 +37,7 @@ export class TrackPath {
         }
 
         this._frames = this._path.computeFrenetFrames(TRACK_DIVISIONS, true);
+        alignNonInvertingFramesToWorldUp(this._frames, TRACK_DIVISIONS, CONTROL_POINTS.length, SEGMENTS);
 
         const tunnelSeg = SEGMENTS.find((segment) => segment.name === 'tunnel');
         this._tunnelStartFrame = Math.floor((tunnelSeg.startIndex / CONTROL_POINTS.length) * TRACK_DIVISIONS);
