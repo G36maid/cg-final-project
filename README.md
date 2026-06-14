@@ -6,6 +6,8 @@
 
 **🎮 線上 Demo：<https://g36maid.github.io/cg-final-project/Theme-Park/>**
 
+**🎬 Demo 影片：影片檔案過大，無法上傳 Moodle，將以 YouTube 連結補充於此。**
+
 ## 遊戲設計
 
 本專案是一個 3D 主題樂園 meta-game（黃昏樂園），玩家在黃昏時分的樂園廣場漫遊，透過遊玩三個 arcade 子遊戲（彈珠台、魔術方塊、俄羅斯方塊）賺取代幣（Tokens），再花費代幣搭乘雲霄飛車。Meta-game 場景承擔電腦圖學期末 spec 的所有硬性圖學門檻；四個子遊戲透過頁面切換整合，保留各自原有玩法。
