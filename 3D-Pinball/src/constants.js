@@ -139,7 +139,7 @@ export const CAMERA = {
     FOV: 45,
     NEAR: 0.1,
     FAR: 200,
-    POSITION: [0, 28, 32],
+    POSITION: [0, 28, -8],
     TARGET: [0, 2, 0],
     SHAKE_COLLISION: 0.15,
     SHAKE_DRAIN: 0.3,

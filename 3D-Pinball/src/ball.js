@@ -19,7 +19,7 @@ export function createProceduralCubemap(gl) {
     const faces = [
         ['#1a0033', '#000000', '#FF2266'], // +X (right)
         ['#1a0033', '#000000', '#00FFCC'], // -X (left)
-        ['#330055', '#0a0015', '#FFAA00'], // +Y (top) - brightest
+        ['#4a0080', '#1a0030', '#FFFFFF'], // +Y (top) — overhead lights, brightest
         ['#05000a', '#000000', '#110022'], // -Y (bottom) - darkest
         ['#1a0033', '#000000', '#FF2266'], // +Z (front)
         ['#1a0033', '#000000', '#00CCFF'], // -Z (back)

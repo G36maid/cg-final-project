@@ -80,8 +80,12 @@ export const ballFragment = /* glsl */ `
         float reflStrength = uMetallic * (0.6 + 0.4 * fresnel);
         color = mix(color, envColor * (uColor * 0.5 + 0.5), reflStrength);
 
-        // Edge fresnel glow
-        color += envColor * fresnel * 0.3 * uMetallic;
+        // Bright fresnel rim — ensures ball silhouette is always visible
+        float rim = pow(1.0 - max(dot(N, V), 0.0), 3.0);
+        color += vec3(0.7, 0.75, 0.85) * rim;
+
+        // Minimum brightness floor so ball never disappears into shadow
+        color = max(color, uColor * 0.18);
 
         // Tone mapping (Reinhard)
         color = color / (color + vec3(1.0));
