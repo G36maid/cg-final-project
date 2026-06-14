@@ -21,6 +21,10 @@ export class PlayerController {
         this.locked = document.pointerLockElement === this.canvas
         this.thirdPerson = false
 
+        // Interaction callbacks (set by main.js)
+        this.onInteract = null
+        this.onToggleInfo = null
+
         this.onCanvasClick = () => this.requestPointerLock()
         this.onPointerLockChange = () => this.syncPointerLockState()
         this.onMouseMove = (event) => this.handleMouseMove(event)
@@ -90,6 +94,11 @@ export class PlayerController {
         ]
     }
 
+    // XZ position for proximity checks (ignores Y)
+    get xzPosition() {
+        return [this.playerPosition[0], this.playerPosition[2]]
+    }
+
     get isLocked() {
         return this.locked
     }
@@ -116,6 +125,11 @@ export class PlayerController {
 
     syncPointerLockState() {
         this.locked = document.pointerLockElement === this.canvas
+        if (this.locked) {
+            this.canvas.classList.add('locked')
+        } else {
+            this.canvas.classList.remove('locked')
+        }
     }
 
     handleMouseMove(event) {
@@ -130,6 +144,16 @@ export class PlayerController {
         if (event.code === 'KeyC' && !event.repeat) {
             this.thirdPerson = !this.thirdPerson
             this.syncCamera()
+            return
+        }
+
+        if (event.code === 'KeyE' && !event.repeat) {
+            if (this.onInteract) this.onInteract()
+            return
+        }
+
+        if (event.code === 'KeyM' && !event.repeat) {
+            if (this.onToggleInfo) this.onToggleInfo()
             return
         }
 
