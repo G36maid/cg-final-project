@@ -36,5 +36,8 @@ export const COLORS = {
     SKY: [0.03, 0.05, 0.08],
 };
 
+// Skybox
+export const SKYBOX_SIZE = 500;
+
 // Light configuration
 export const MAX_LIGHTS = 32;

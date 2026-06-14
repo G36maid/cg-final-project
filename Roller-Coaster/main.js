@@ -16,6 +16,7 @@ import { AmbientTransition } from './src/tunnel/ambientTransition.js';
 import { CameraRig } from './src/camera/CameraRig.js';
 import { Input } from './src/input/Input.js';
 import { HUD } from './src/hud/HUD.js';
+import { createSkybox } from './src/skybox.js';
 
 void MAX_LIGHTS;
 void Vec3;
@@ -40,6 +41,9 @@ const camera = new Camera(gl, { fov: 60, near: 0.1, far: 2000 });
 camera.position.set(0, 40, 120);
 
 const scene = new Transform();
+
+const skyboxMesh = createSkybox(gl);
+skyboxMesh.setParent(scene);
 
 const railProgram = createMetalProgram(gl, { color: COLORS.RAIL });
 const groundProgram = createMetalProgram(gl, { color: COLORS.GROUND });
