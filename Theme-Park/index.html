@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黃昏樂園 Dusk Park</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="gl"></canvas>
+
+    <!-- 第一人稱十字準星 -->
+    <div id="crosshair"></div>
+
+    <!-- HUD：代幣計數與搭乘次數 -->
+    <div id="hud">
+        <div class="hud-top-left">
+            <div class="hud-token-count" id="token-count">0</div>
+            <div class="hud-token-label">Tokens</div>
+            <div class="hud-rides" id="rides-count">Coaster rides: 0</div>
+        </div>
+    </div>
+
+    <!-- 互動提示（E 鍵） -->
+    <div id="prompt"></div>
+
+    <!-- 資訊面板（M 鍵開關） -->
+    <div id="info-panel">
+        <h1>黃昏樂園</h1>
+        <p>歡迎來到日夜之交的主題樂園。在這裡，你可以在電子遊樂場賺取代幣，再花代幣搭乘雲霄飛車。</p>
+
+        <h2>目標</h2>
+        <ul>
+            <li>在 Arcade Hall 遊玩三台機台賺取代幣</li>
+            <li>累積代幣後到 Coaster Station 搭乘雲霄飛車</li>
+            <li>搭乘 3 次完成導覽，解鎖煙火慶祝</li>
+        </ul>
+
+        <h2>操作</h2>
+        <ul>
+            <li><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> — 移動</li>
+            <li><kbd>滑鼠</kbd> — 視角</li>
+            <li><kbd>C</kbd> — 切換第一/第三人稱</li>
+            <li><kbd>E</kbd> — 與設施互動（進入建物 / 搭車）</li>
+            <li><kbd>M</kbd> — 開關此地圖</li>
+            <li><kbd>ESC</kbd> — 解除滑鼠鎖定</li>
+        </ul>
+
+        <h2>設施</h2>
+        <ul>
+            <li><strong>Arcade Hall</strong> — 三台機台：彈珠台、魔術方塊、俄羅斯方塊</li>
+            <li><strong>Coaster Station</strong> — 每趟 20 代幣</li>
+            <li><strong>Tour Train</strong> — 免費繞園導覽列車</li>
+        </ul>
+
+        <div class="close-hint">按 <kbd>M</kbd> 或 <kbd>ESC</kbd> 關閉此地圖</div>
+    </div>
+
+    <!-- Fade 過渡（切換場景用） -->
+    <div id="fade"></div>
+
+    <!-- 載入畫面 -->
+    <div id="loader">
+        <h1>黃昏樂園</h1>
+        <p>Dusk Park</p>
+        <button class="start-btn" id="start-btn">進入樂園</button>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
