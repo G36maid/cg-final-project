@@ -53,7 +53,7 @@ export function createRockProgram(gl) {
             varying vec2 vUv;
 
             void main() {
-                vec3 baseColor = vec3(0.2, 0.133, 0.067); // #332211
+                vec3 baseColor = vec3(0.12, 0.34, 0.14);
                 float roughness = 0.95;
                 
                 vec3 lit = calcPointLights(vWorldPos, normalize(vNormal), baseColor, roughness);
@@ -66,7 +66,7 @@ export function createRockProgram(gl) {
             uDisplacement: { value: 8.0 },
             uNoiseScale: { value: 0.02 },
             uTime: { value: 0 },
-            uAmbient: { value: 0.15 },
+            uAmbient: { value: 0.7 },
             uNumLights: { value: 0 },
             uPointLightPos: { value: new Array(MAX_LIGHTS * 3).fill(0) },
             uPointLightColor: { value: new Array(MAX_LIGHTS * 3).fill(0) },

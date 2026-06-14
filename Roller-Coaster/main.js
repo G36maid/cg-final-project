@@ -116,8 +116,9 @@ function update(time) {
     car.group.visible = cameraRig.mode !== 1;
 
     const ambient = 0.3;
+    const rockAmbient = 0.7;
     rockProgram.uniforms.uTime.value = elapsedTime;
-    rockProgram.uniforms.uAmbient.value = ambient;
+    rockProgram.uniforms.uAmbient.value = rockAmbient;
 
     for (let i = 0; i < metalPrograms.length; i++) {
         metalPrograms[i].uniforms.uAmbient.value = ambient;
