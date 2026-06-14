@@ -3,6 +3,10 @@ import { CAR_COUNT, CAR_LENGTH } from '../config.js';
 import { createCarMesh } from './carGeometry.js';
 import { tnbToQuat } from '../math/frames.js';
 
+// Pre-allocated temp vectors to avoid per-frame GC pressure
+const _right = new Vec3();
+const _upOffset = new Vec3();
+
 export class Car {
     constructor(gl, trackSampler, programs) {
         this.sampler = trackSampler;
@@ -23,10 +27,14 @@ export class Car {
             const frame = this.sampler.sampleAtDistance(carS);
 
             mesh.position.copy(frame.point);
-            const upOffset = new Vec3().copy(frame.normal).scale(0.5);
-            mesh.position.add(upOffset);
+            mesh.position.add(_upOffset.copy(frame.normal).scale(0.5));
 
-            const q = tnbToQuat(frame.tangent, frame.normal, frame.binormal, new Quat());
+            // Standard Frenet binormal B = T × N creates a left-handed basis (B, N, T)
+            // with det = -1, which cannot produce a valid rotation quaternion.
+            // Use right = N × T = -B to form the right-handed basis (-B, N, T)
+            // where (-B) × N = T, giving det = +1 for a proper rotation matrix.
+            _right.cross(frame.normal, frame.tangent).normalize();
+            const q = tnbToQuat(frame.tangent, frame.normal, _right, new Quat());
             mesh.quaternion.copy(q);
         });
     }

@@ -5,6 +5,8 @@ function clamp01(value) {
     return Math.max(0, Math.min(1, value));
 }
 
+const _normalProj = new Vec3();
+
 export class TrackSampler {
     constructor(trackPath) {
         this._trackPath = trackPath;
@@ -38,6 +40,11 @@ export class TrackSampler {
         const point = this._trackPath.getPointAt(t, new Vec3());
         const tangent = new Vec3().copy(this._frames.tangents[i0]).lerp(this._frames.tangents[i1], frac).normalize();
         const normal = new Vec3().copy(this._frames.normals[i0]).lerp(this._frames.normals[i1], frac).normalize();
+
+        // Gram-Schmidt: remove tangent component from interpolated normal
+        _normalProj.copy(tangent).scale(normal.dot(tangent));
+        normal.sub(_normalProj).normalize();
+
         const binormal = new Vec3().cross(tangent, normal).normalize();
 
         return { point, tangent, normal, binormal };

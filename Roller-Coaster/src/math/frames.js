@@ -4,6 +4,10 @@ const MAX_BANKING_ANGLE = 75 * Math.PI / 180;
 const frameMatrix = new Mat3();
 const normalProjection = new Vec3();
 
+// Expects a right-handed basis: the first argument ("binormal" position) must
+// satisfy first × normal = tangent, i.e. determinant = +1.
+// Standard Frenet B = T × N creates a left-handed (B, N, T) with det = -1;
+// callers must pass -B (i.e. N × T) for correct results.
 export function tnbToQuat(tangent, normal, binormal, outQuat = new Quat()) {
     frameMatrix.fromBasis(binormal, normal, tangent);
     return outQuat.fromMatrix3(frameMatrix);
