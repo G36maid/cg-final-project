@@ -18,7 +18,7 @@ A fully interactive 3D Rubik's Cube built with [OGL](https://github.com/oframe/o
 Requires an HTTP server (ES modules won't work over `file://`):
 
 ```bash
-miniserve .
+miniserve . --index index.html
 ```
 
 Then open the printed URL in your browser.

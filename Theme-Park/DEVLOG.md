@@ -59,6 +59,8 @@ ES module 的相對 import 路徑被瀏覽器 URL-normalize：
 
 miniserve 需移除 `--no-symlinks` flag 才能跟隨 symlink。其他 3 個遊戲（3D-Pinball/Rubik's-Cube/3D-Tetris）沒有 symlink，是從 repo 根目錄服務的。
 
+另外，`miniserve . -p 8765 --index index.html` 會因 repo 根目錄沒有 `index.html` 而發出警告，這是無害的——子目錄如 `/Theme-Park/` 仍會正確回傳其 `index.html`。
+
 ---
 
 ## OGL 慣例摘要（從 3D-Pinball 提取）

@@ -248,6 +248,8 @@ miniserve . -p 8765 --index index.html
 
 瀏覽器開啟 `http://localhost:8765/Theme-Park/`。純 ES modules，瀏覽器直接載入，無 build step。
 
+> `--index index.html` 讓 miniserve 在收到目錄路徑時自動回傳 `index.html`。Repo 根目錄無 `index.html`，miniserve 會在 `/` 顯示目錄列表並發出無害警告。**請勿加 `--no-symlinks`**——`Theme-Park/ogl/` 是 symlink。
+
 ## 11. 與既有子遊戲的整合協議
 
 - **導航**：Hub 透過 `location.href = '../3D-Pinball/index.html'` 切換到子遊戲；子遊戲讀 URL param `?from=hub` 顯示返回鈕
