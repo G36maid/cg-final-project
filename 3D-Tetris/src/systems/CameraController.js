@@ -1,4 +1,4 @@
-import { Orbit, Vec3 } from '../../ogl/src/index.js';
+import { Orbit, Vec3 } from '../../../ogl/src/index.js';
 
 const BOARD_CENTER = new Vec3(5, 10, 5);
 
