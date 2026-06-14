@@ -16,10 +16,11 @@
     <canvas id="gl"></canvas>
     <canvas id="hud"></canvas>
     <script>
-    (function() {
-        var params = new URLSearchParams(location.search);
+    (() => {
+        const params = new URLSearchParams(location.search);
         if (params.get('from') !== 'hub') return;
-        var btn = document.createElement('button');
+        const btn = document.createElement('button');
+        btn.id = 'back-to-hub';
         btn.textContent = '↩ 返回樂園';
         Object.assign(btn.style, {
             position: 'fixed', top: '16px', right: '16px',
@@ -28,20 +29,20 @@
             color: '#ffb878', fontSize: '14px', cursor: 'pointer', zIndex: '1000',
             fontFamily: 'sans-serif'
         });
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', () => {
             try {
-                var raw = localStorage.getItem('dusk-park-state');
-                var state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
+                const raw = localStorage.getItem('dusk-park-state');
+                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
                 state.coasterRides = (state.coasterRides || 0) + 1;
                 localStorage.setItem('dusk-park-state', JSON.stringify(state));
             } catch(_) {}
             location.href = '../Theme-Park/index.html';
         });
         document.body.appendChild(btn);
-        window.addEventListener('dusk-park-coaster-complete', function() {
+        window.addEventListener('dusk-park-coaster-complete', () => {
             try {
-                var raw = localStorage.getItem('dusk-park-state');
-                var state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
+                const raw = localStorage.getItem('dusk-park-state');
+                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
                 state.coasterRides = (state.coasterRides || 0) + 1;
                 localStorage.setItem('dusk-park-state', JSON.stringify(state));
             } catch(_) {}

@@ -40,7 +40,7 @@
                 <span>M</span> — Right Flipper<br>
                 <span>SPACE</span> — Hold to Charge Plunger / Release to Launch
             </div>
-            <button id="hud-start">INSERT COIN</button>
+            <button type="button" id="hud-start">INSERT COIN</button>
         </div>
 
         <!-- ── Game Over Screen ─────────────────────────────────────── -->
@@ -48,16 +48,17 @@
             <h1>GAME OVER</h1>
             <p>FINAL SCORE</p>
             <div id="hud-gameover-score">0</div>
-            <button id="hud-restart">PLAY AGAIN</button>
+            <button type="button" id="hud-restart">PLAY AGAIN</button>
         </div>
     </div>
 
     <!-- ── Dusk Park Integration ─────────────────────────────────────── -->
     <script>
-    (function() {
-        var params = new URLSearchParams(location.search);
+    (() => {
+        const params = new URLSearchParams(location.search);
         if (params.get('from') !== 'hub') return;
-        var btn = document.createElement('button');
+        const btn = document.createElement('button');
+        btn.id = 'back-to-hub';
         btn.textContent = '↩ 返回樂園';
         Object.assign(btn.style, {
             position: 'fixed', top: '16px', right: '16px',
@@ -66,28 +67,28 @@
             color: '#ffb878', fontSize: '14px', cursor: 'pointer', zIndex: '1000',
             fontFamily: 'sans-serif'
         });
-        btn.addEventListener('click', function() { location.href = '../Theme-Park/index.html'; });
+        btn.addEventListener('click', () => { location.href = '../Theme-Park/index.html'; });
         document.body.appendChild(btn);
-        window.addEventListener('dusk-park-gameover', function(e) {
-            var score = e.detail.score || 0;
-            var payout = Math.floor(score * 0.01);
+        window.addEventListener('dusk-park-gameover', (e) => {
+            const score = e.detail.score || 0;
+            const payout = Math.floor(score * 0.01);
             try {
-                var raw = localStorage.getItem('dusk-park-state');
-                var state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
+                const raw = localStorage.getItem('dusk-park-state');
+                const state = raw ? JSON.parse(raw) : { tokens: 0, coasterRides: 0, gamesPlayed: { pinball: 0, rubiks: 0, tetris: 0 }, achievements: [] };
                 state.tokens += payout;
                 state.gamesPlayed.pinball = (state.gamesPlayed.pinball || 0) + 1;
                 localStorage.setItem('dusk-park-state', JSON.stringify(state));
             } catch(_) {}
-            var info = document.createElement('div');
+            const info = document.createElement('div');
             Object.assign(info.style, {
                 position: 'fixed', bottom: '60px', left: '50%', transform: 'translateX(-50%)',
                 padding: '12px 24px', background: 'rgba(20,15,35,0.9)', borderRadius: '8px',
                 border: '1px solid rgba(255,180,120,0.5)', color: '#ffb878', fontSize: '18px',
                 fontWeight: '700', zIndex: '1001', fontFamily: 'sans-serif', textAlign: 'center'
             });
-            info.textContent = '+ ' + payout + ' Tokens';
+            info.textContent = `+ ${payout} Tokens`;
             document.body.appendChild(info);
-            setTimeout(function() { info.remove(); }, 3000);
+            setTimeout(() => { info.remove(); }, 3000);
         });
     })();
     </script>
