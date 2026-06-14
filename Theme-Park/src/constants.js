@@ -16,6 +16,7 @@ export const PLAYER = {
     MOUSE_SENSITIVITY: 0.0022,
     THIRD_PERSON_DISTANCE: 6,
     THIRD_PERSON_HEIGHT: 3,
+    COLLISION_RADIUS: 0.45,
 };
 
 // ===== World =====
