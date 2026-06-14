@@ -8,7 +8,10 @@ import { PlayerController } from './hub/player.js';
 import { createShadow } from './hub/shadow.js';
 import { loadState, spendTokens } from './meta/store.js';
 import { updateHUD, showPrompt, hidePrompt, showCrosshair, hideCrosshair, toggleInfoPanel } from './meta/hud.js';
-import { navigateTo, getArcadePinballURL, getCoasterURL, fadeIn, cameFromSubGame } from './meta/nav.js';
+import {
+    navigateTo, getArcadePinballURL, getArcadeRubiksURL, getArcadeTetrisURL,
+    getCoasterURL, fadeIn, cameFromSubGame,
+} from './meta/nav.js';
 
 class DuskPark {
     constructor() {
@@ -36,6 +39,7 @@ class DuskPark {
 
         this.scene = new Transform();
         this.nearestTrigger = null;
+        this.arcadeMenu = document.getElementById('arcade-menu');
 
         this.buildScene();
         this.player = new PlayerController(this.gl, this.camera, this.canvas);
@@ -69,12 +73,15 @@ class DuskPark {
         const fountain = createFountain(this.gl, this.cubemap);
         this.fountain = fountain.group;
         this.fountain.setParent(this.scene);
-        shadow.add({ mesh: fountain.base, cast: true, receive: true });
+        for (const child of this.fountain.children) {
+            shadow.add({ mesh: child, cast: child !== fountain.water && child !== fountain.upperWater, receive: true });
+        }
     }
 
     bindEvents() {
         window.addEventListener('resize', () => this.onResize());
         document.getElementById('start-btn').addEventListener('click', () => this.start());
+        this.arcadeMenu.addEventListener('click', (event) => this.handleArcadeMenuClick(event));
     }
 
     onResize() {
@@ -104,11 +111,11 @@ class DuskPark {
         const dt = Math.min(0.033, time - this.lastTime);
         this.lastTime = time;
 
-        this.update(dt, time);
-        this.render(time);
+        this.update(dt);
+        this.render();
     }
 
-    update(dt, time) {
+    update(dt) {
         this.player.update(dt);
 
         if (this.player.isLocked) {
@@ -153,6 +160,7 @@ class DuskPark {
             }
         } else {
             hidePrompt();
+            this.hideArcadeMenu();
         }
     }
 
@@ -175,19 +183,47 @@ class DuskPark {
         }
 
         if (trigger.facility === 'Arcade Hall') {
-            navigateTo(getArcadePinballURL());
+            this.showArcadeMenu();
             return;
         }
+    }
+
+    showArcadeMenu() {
+        this.arcadeMenu.classList.add('visible');
+        if (document.pointerLockElement === this.canvas) document.exitPointerLock();
+    }
+
+    hideArcadeMenu() {
+        this.arcadeMenu.classList.remove('visible');
+    }
+
+    handleArcadeMenuClick(event) {
+        const button = event.target.closest('button[data-game]');
+        if (!button) return;
+
+        const game = button.dataset.game;
+        if (game === 'close') {
+            this.hideArcadeMenu();
+            return;
+        }
+
+        const urls = {
+            pinball: getArcadePinballURL(),
+            rubiks: getArcadeRubiksURL(),
+            tetris: getArcadeTetrisURL(),
+        };
+
+        navigateTo(urls[game]);
     }
 
     handleToggleInfo() {
         toggleInfoPanel();
     }
 
-    render(time) {
+    render() {
         this.shadow.render({ scene: this.scene });
         this.renderer.render({ scene: this.scene, camera: this.camera });
     }
 }
 
-const duskPark = new DuskPark();
+new DuskPark();

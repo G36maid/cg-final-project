@@ -148,6 +148,66 @@ html, body {
     margin-right: 6px;
 }
 
+#arcade-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, 86vw);
+    padding: 26px;
+    display: none;
+    background: rgba(14, 9, 24, 0.94);
+    border: 1px solid rgba(255, 184, 120, 0.46);
+    border-radius: 14px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65), inset 0 0 32px rgba(255, 90, 180, 0.06);
+    z-index: 30;
+    pointer-events: all;
+}
+
+#arcade-menu.visible {
+    display: block;
+}
+
+#arcade-menu h2 {
+    margin-bottom: 8px;
+    color: #ffb878;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+#arcade-menu p {
+    margin-bottom: 18px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 13px;
+}
+
+#arcade-menu button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: rgba(255, 184, 120, 0.08);
+    border: 1px solid rgba(255, 184, 120, 0.32);
+    border-radius: 8px;
+    color: #fff0dc;
+    font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s, transform 0.18s;
+}
+
+#arcade-menu button:hover {
+    background: rgba(255, 184, 120, 0.18);
+    border-color: rgba(255, 184, 120, 0.72);
+    transform: translateY(-1px);
+}
+
+#arcade-menu button.secondary {
+    color: rgba(255, 255, 255, 0.62);
+    background: transparent;
+}
+
 /* ===== 資訊板 / 說明面板 ===== */
 #info-panel {
     position: fixed;

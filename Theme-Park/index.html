@@ -24,6 +24,15 @@
     <!-- 互動提示（E 鍵） -->
     <div id="prompt"></div>
 
+    <div id="arcade-menu">
+        <h2>Arcade Hall</h2>
+        <p>選擇一台機台賺取 Tokens</p>
+        <button type="button" data-game="pinball">3D Pinball</button>
+        <button type="button" data-game="rubiks">Rubik's Cube</button>
+        <button type="button" data-game="tetris">3D Tetris</button>
+        <button type="button" data-game="close" class="secondary">返回廣場</button>
+    </div>
+
     <!-- 資訊面板（M 鍵開關） -->
     <div id="info-panel">
         <h1>黃昏樂園</h1>
@@ -63,7 +72,7 @@
     <div id="loader">
         <h1>黃昏樂園</h1>
         <p>Dusk Park</p>
-        <button class="start-btn" id="start-btn">進入樂園</button>
+        <button type="button" class="start-btn" id="start-btn">進入樂園</button>
     </div>
 
     <script type="module" src="src/main.js"></script>
