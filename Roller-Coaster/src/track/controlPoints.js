@@ -53,11 +53,25 @@ export const CONTROL_POINTS = [
     new Vec3(-56, 10, 24),
     new Vec3(-42, 10, 36),
 
-    new Vec3(-48, 7, 32),
-    new Vec3(-54, 4, 24),
-    new Vec3(-58, 3, 12),
-    new Vec3(-59, 2, -6),
-    new Vec3(-58, 2, -24),
+    // Brake run: descend + first semicircle (NW turn, radius ~14)
+    new Vec3(-50, 6, 33),
+    new Vec3(-57, 3, 26),
+    new Vec3(-63, 2, 18),
+    new Vec3(-68, 2, 10),
+    new Vec3(-70, 2, 0),
+    new Vec3(-68, 2, -10),
+
+    // Station straight (heading south, parallel to lift hill, offset west)
+    new Vec3(-65, 2, -18),
+    new Vec3(-64, 2, -28),
+
+    // Second semicircle (SW turn, radius ~14)
+    new Vec3(-67, 2, -35),
+    new Vec3(-68, 2, -42),
+    new Vec3(-65, 2, -48),
+    new Vec3(-60, 2, -50),
+
+    // Approach to lift hill start
     new Vec3(-55, 2, -45),
 ];
 
@@ -69,5 +83,5 @@ export const SEGMENTS = [
     { name: 'tunnel', startIndex: 27, endIndex: 32 },
     { name: 'camelHumps', startIndex: 32, endIndex: 39 },
     { name: 'sCurve', startIndex: 39, endIndex: 44 },
-    { name: 'brakeRun', startIndex: 44, endIndex: 50 },
+    { name: 'brakeRun', startIndex: 44, endIndex: 60 },
 ];
