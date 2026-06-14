@@ -2,10 +2,10 @@
 %  Dusk Park (黃昏樂園) — Computer Graphics Final Project Design Document
 %  Built with Tectonic.  Pure English.
 % =====================================================================
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
 
 % ---------- Packages ----------
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.75in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -54,18 +54,21 @@
 
 % ---------- Student info ----------
 \newcommand{\studentid}[0]{41173058H}
+\newcommand{\department}[0]{CSIE / ME}
+\newcommand{\studentyear}[0]{2026}
 \newcommand{\studentname}[0]{鍾詠傑 (Chung Yung-Chieh)}
 
 \begin{document}
 
 % =====================================================================
 \section*{Dusk Park --- Design Document}
-\addcontentsline{toc}{section}{Dusk Park --- Design Document}
 
 \noindent\textbf{Live demo:} \url{https://g36maid.github.io/cg-final-project/Theme-Park/}
 
 \begin{tabularx}{\textwidth}{@{}lX@{}}
   \textbf{Student ID:}  & \studentid \\
+  \textbf{Department:}  & \department \\
+  \textbf{Year:}        & \studentyear \\
   \textbf{Name:}        & \studentname \\
 \end{tabularx}
 
@@ -81,35 +84,21 @@
   \label{fig:metagame}
 \end{figure}
 
-\tableofcontents
-\vspace{4pt}
-
 % =====================================================================
 \section{Game Concept}
 
 \textbf{Dusk Park} is a 3D theme-park meta-game. The player wanders an outdoor plaza at
 dusk and visits four integrated sub-games: a neon \emph{Pinball} table, a \emph{Rubik's
-Cube} solver, a \emph{3D Tetris} well, and a \emph{Roller Coaster} ride. Three of these
-sub-games (Pinball, Rubik's Cube, Tetris) are arcade machines that \emph{award} tokens on
-completion; the Roller Coaster \emph{consumes} tokens per ride. The meta-objective is
-simple and clearly communicated to the player through the HUD and an information board:
+Cube} solver, a \emph{3D Tetris} well, and a \emph{Roller Coaster} ride. Three
+arcade sub-games \emph{award} tokens on completion; the Roller Coaster \emph{consumes}
+them per ride. The meta-objective, shown on the HUD and information board, is: \textit{earn
+tokens $\to$ ride the coaster $\times$3 $\to$ fireworks celebration.}
 
-\begin{quote}
-  \textit{Earn tokens by playing arcade games, then spend them on coaster rides.
-  After three rides the tour is ``complete'' and a fireworks celebration plays.}
-\end{quote}
-
-The meta-game itself is a first-person walkthrough scene that concentrates every hard graphics
-requirement of the course spec (T1--T7): player movement, first/third-person camera, Phong
-point lights, textured surfaces, a skybox cubemap, cubemap reflection on the fountain
-water, and shadow mapping. The sub-games are integrated through page navigation and
-\texttt{localStorage}-based token persistence, so each sub-game keeps its own renderer and
-gameplay intact.
-
-The experience we want the player to have is one of \emph{wandering a park caught between
-day and night}. Dusk is the narrative metaphor: the park sits at the boundary of reality
-(the meta-game) and the game universes behind each door, and the warm light makes every graphics
-technique read clearly on screen.
+The meta-game is a first-person walkthrough that concentrates every hard graphics
+requirement (T1--T7). Sub-games integrate via page navigation and
+\texttt{localStorage}-based token persistence, keeping each renderer and gameplay intact.
+Dusk is the narrative metaphor: the park sits at the boundary of reality and the game
+universes behind each door, and the warm light makes every graphics technique read clearly.
 
 % =====================================================================
 \section{Scene \& Visual Design}
@@ -175,65 +164,36 @@ the entrance provides the in-game instructions (D6).
 
 \subsection{Camera \& Projection}
 
-The camera uses a perspective projection with a \textbf{65\textdegree{} FOV}. We chose a
-slightly wider-than-default FOV because the park is an open plaza the player must take in
-laterally; a narrow FOV would feel tunnel-visioned when standing among the buildings. The
-\textbf{near plane is 0.1} and the \textbf{far plane is 1000}; the large far plane is
-required because the skybox box is $500^3$ units and must never be clipped. The canvas
-fills the browser viewport (16:9 in the screenshot), so the aspect ratio matches the
-display.
+The camera uses a \textbf{65\textdegree{} FOV} perspective projection with near 0.1 and
+far 1000. The wide FOV suits an open plaza; the large far plane is required because the
+skybox is a $500^3$ box. In first person the camera sits at \textbf{eye height 1.7 units}
+so the buildings (7--9 units) tower over the player. Pressing \texttt{C} switches to
+third-person (6 units back, 3 up), satisfying the spec's camera-control requirement (T2)
+and letting the player see their own long shadows.
 
-In first person the camera sits at the player's \textbf{eye height of 1.7 units}, a
-deliberately human scale so the buildings (7--9 units tall) tower over the player and the
-fountain (2.3-unit orb) is at a comfortable viewing angle. Pressing \texttt{C} switches to
-a third-person view that pulls the camera 6 units back and 3 units up; this exists to
-satisfy the spec's ``meaningful camera control'' (T2) and to let the player see their own
-context and the long shadows they cast.
-
-Mouse look uses pointer lock with a sensitivity of \textbf{0.0022 rad/px}; pitch is
-clamped to $\pm 89^{\circ}$ to avoid gimbal flip. Movement is WASD with an
-exponentially-damped velocity (\texttt{blend = 1 - exp(-18 * dt)}) rather than instant
-snap, so the camera glides to a stop---this hides the aliasing of discrete key presses
-and prevents the scene from feeling robotic.
+Mouse look uses pointer lock at \textbf{0.0022 rad/px} with pitch clamped to
+$\pm 89^{\circ}$. WASD movement uses exponentially-damped velocity
+(\texttt{1 - exp(-18*dt)}) so the camera glides rather than snaps---hiding discrete
+keypress aliasing.
 
 \subsection{Lighting}
 
-\subsubsection{Directional Sun (Fill)}
+\textbf{Directional sun (fill):} warm orange (\texttt{[1.0, 0.65, 0.38]}) at low
+intensity \textbf{0.35}, direction \texttt{[-0.4, 0.35, -0.7]}. The sun is a fill, not the
+hero---a bright sun would flatten the contrast between lamp halos and unlit ground. The
+direction casts building shadows \emph{forward across the plaza} where the player walks,
+making shadow mapping (T7) visible from spawn.
 
-The directional sun is intentionally a \emph{fill} light, not the hero. It uses a warm
-orange colour (\texttt{[1.0, 0.65, 0.38]}) at a modest \textbf{intensity of 0.35} with
-direction \texttt{[-0.4, 0.35, -0.7]}. We kept the intensity low because the real visual
-work is done by the point lights: a bright sun would flatten the contrast between lit lamp
-halos and the unlit ground. The direction places the sun low and to the left-rear, which
-casts building shadows \emph{forward and right across the plaza} where the player walks,
-making the shadow-mapping technique (T7) immediately visible from the spawn point. Had the
-sun been on the other side, the shadows would fall away from the plaza and the technique
-would be invisible.
+\textbf{Point lights:} four warm lamps (\texttt{[1.0, 0.85, 0.55]}, intensity
+\textbf{1.8}) at plaza corners (height 5) plus a cool fountain accent (intensity 0.8) at
+centre. Four were chosen because the 40-unit plaza needs coverage; fewer lights and the
+specular term would never fire on far buildings. Attenuation
+$\frac{1}{1+0.05d+0.005d^2}$ limits each lamp to its neighbourhood. Point lights are not
+shadowed (only the sun is)---a deliberate cost trade-off.
 
-\subsubsection{Point Lights}
-
-There are \textbf{four warm lamp point lights} (colour \texttt{[1.0, 0.85, 0.55]},
-intensity \textbf{1.8}) placed on the plaza corners at height 5, plus a cooler
-\textbf{fountain accent light} (colour \texttt{[0.45, 0.75, 1.0]}, intensity 0.8) at the
-centre. The Phong shader supports up to 8 point lights via a uniform array. Four corner
-lamps were chosen (rather than two or one) because the plaza is 40+ units across: with
-fewer lights the far buildings would be unlit and the specular term---the whole point of
-the Phong requirement---would never fire on them. The attenuation model is
-$\frac{1}{1 + 0.05d + 0.005d^2}$; the quadratic term kicks in around $d \approx 20$ which
-is roughly the plaza radius, so lamps brighten their immediate neighbourhood without
-washing out the scene globally.
-
-The point lights are \emph{not} shadowed (only the directional sun is). Shadowing 4 point
-lights would require 4 additional depth passes (or a cubemap shadow per light), which is
-prohibitively expensive for a browser game. This is a deliberate cost-quality trade-off.
-
-\subsubsection{Ambient}
-
-The ambient term is a cool purple \texttt{[0.12, 0.10, 0.18]}, deliberately tinted toward
-the sky's cool side rather than grey. A neutral grey ambient on a dusk scene reads as
-``wrong'' because the eye expects skylight to be blue-ish; the purple tint sells the
-time of day. The intensity is low (0.12) so that the unlit sides of buildings still read
-as ``in shadow'' and the lit sides pop.
+\textbf{Ambient:} cool purple \texttt{[0.12, 0.10, 0.18]}, tinted toward the sky rather
+than grey. The eye expects dusk skylight to be blue-ish; the low intensity (0.12) keeps
+unlit sides reading as ``in shadow.''
 
 \subsection{Phong Materials}
 
@@ -260,82 +220,51 @@ for each follows.
   \end{tabularx}
 \end{table}
 
-\textbf{Per-parameter justification for the key surfaces:}
+\textbf{Per-parameter justification for key surfaces:}
 
 \begin{itemize}[leftmargin=*, nosep]
-  \item \textbf{Ground} (\textit{the surface the player walks on}): $k_a{=}0.15$ is just
-    enough to keep the ground visible in shadow; $k_d{=}0.35$ is deliberately \emph{low}
-    so that the ground does not self-light and compete with the lamps---the ground should
-    \emph{receive} light, not generate the impression of light. $k_s{=}0.15$ with
-    shininess 8 gives a broad, dull sheen appropriate for weathered stone; a high
-    shininess here would produce unrealistic tiny hotspots on a rough material.
-  \item \textbf{Metal} (\textit{lamp heads, coaster station, fountain orb}): $k_s{=}0.90$
-    is the highest in the scene because metal's defining visual property is that it
-    \emph{reflects direct light sharply toward the viewer}. The shininess of 128 makes
-    the specular highlight a tight bright dot---exactly how a polished metal sphere reads
-    under a point light. We did \emph{not} raise $k_d$ to match; keeping diffuse at 0.30
-    ensures the metal is dark between highlights, which is what makes the highlights read
-    as reflections rather than as the surface's own colour.
-  \item \textbf{Buildings}: the diffuse 0.55 is higher than the ground because buildings
-    are the primary surfaces the player looks at and should carry their texture colour
-    well; the specular 0.30 at shininess 32 is the sweet spot where a lamp halo is
-    visible on the wall without the wall looking metallic.
+  \item \textbf{Ground}: $k_a{=}0.15$ keeps it barely visible in shadow; $k_d{=}0.35$ is
+    deliberately low so the ground \emph{receives} light without competing with lamps;
+    $k_s{=}0.15$ / shininess 8 gives a broad matte sheen for weathered stone.
+  \item \textbf{Metal} (lamps, station, fountain orb): $k_s{=}0.90$ / shininess 128
+    produces the tight bright glint that defines polished metal under a point light. Low
+    $k_d{=}0.30$ keeps metal dark between highlights, making them read as reflections.
+  \item \textbf{Buildings}: $k_d{=}0.55$ carries texture colour; $k_s{=}0.30$ /
+    shininess 32 shows a lamp halo on the wall without looking metallic.
 \end{itemize}
 
 \subsection{Textures}
 
-\subsubsection{Procedural Stone Ground (T4)}
+\textbf{Procedural stone ground (T4):} a $256^2$ canvas texture with per-pixel noise,
+32-px grout lines, and crack polylines, tiled $\approx 33\times$ across the $200^2$ plane
+(\texttt{REPEAT}, mipmaps on). Procedural avoids both asset dependencies and visible seams;
+the grout lines give scale (``paved plaza'', not ``infinite gravel'').
 
-The plaza floor uses a $256\times256$ procedural texture generated on a
-\texttt{<canvas>}: a per-pixel noise grain over a warm stone base, $32$-px tile grout
-lines, and 18 hand-drawn crack polylines. The UVs are tiled so the texture repeats
-$\approx 33$ times across the $200\times200$ ground plane (\texttt{wrapS/T = REPEAT},
-mipmaps on). We chose procedural over a photo texture because (a) the monorepo carries no
-image assets and (b) procedural tiling avoids the visible seam a single photo would
-produce. The grout lines give a sense of scale; without them a flat noise would read as
-``infinite gravel'' rather than ``paved plaza''.
+\textbf{Building facades:} each building gets a distinct procedural texture that telegraphs
+its sub-game---neon bands for the Arcade Hall, brushed-metal grid for the Coaster Station,
+wooden planks for the Tour Train.
 
-\subsubsection{Building Facades}
-
-Each building has a distinct procedural texture: the Arcade Hall gets neon pink/cyan
-horizontal bands over a dark noisy base (echoing the neon pinball interior); the Coaster
-Station gets a brushed-metal diagonal gradient with an orange bolt grid; the Tour Train
-gets wooden planks with bezier grain. These are not random---they telegraph the sub-game
-behind each door before the player reads the sign.
-
-\subsubsection{Skybox (T5)}
-
-The skybox is a $500^3$ unit box with a procedurally generated cubemap. Each side face is
-a vertical gradient: indigo zenith $\to$ purple band $\to$ orange-red $\to$ bright orange
-sunset $\to$ gold $\to$ dark ground. The $+Y$ (top) face is pure indigo with 120 randomly
-placed stars; the $-Y$ (bottom) face is flat warm dark. The box uses \texttt{cullFace =
-GL\_FRONT} (so we see the inside), \texttt{depthWrite = false} (so it does not occlude
-geometry), and \texttt{frustumCulled = false} (so OGL does not cull it when the camera is
-off-origin).
+\textbf{Skybox (T5):} a $500^3$ box with a procedural cubemap. Side faces are vertical
+gradients (indigo $\to$ orange sunset $\to$ dark ground); the top face has 120 stars. Uses
+\texttt{cullFace = GL\_FRONT}, \texttt{depthWrite = false}, \texttt{frustumCulled = false}.
 
 \subsection{Shadow Mapping (T7)}
 
-Shadows are produced by OGL's \texttt{Shadow} extra: an orthographic ``sun camera''
-matched to the directional light, rendering a \textbf{$2048\times2048$ depth map}. The
-ortho frustum is $\pm30$ units with near 0.5 and far 80, positioned 40 units up the sun
-vector looking at the origin. The Phong fragment shader projects each fragment into the
-sun camera's clip space, samples the depth map, and applies a shadow factor of
-\textbf{0.35} (i.e.\ shadowed regions keep 35\% of the sun's contribution, not 0\%) with a
-depth bias of \textbf{0.002}. We chose 0.35 rather than full black because a dusk scene's
-shadows are soft-filled by skylight; pitch-black shadows would look like high noon, not
-dusk. The bias of 0.002 suppresses acne without peter-panning at this scale.
+OGL's \texttt{Shadow} extra renders a \textbf{$2048^2$ depth map} from an orthographic sun
+camera ($\pm30$ frustum, near 0.5, far 80, positioned 40 units up the sun vector). The Phong
+shader projects each fragment into sun-clip space and applies a shadow factor of
+\textbf{0.35} (shadowed regions keep 35\% of the sun contribution) with bias \textbf{0.002}.
+We chose 0.35 over full black because dusk shadows are soft-filled by skylight; pitch-black
+shadows would read as high noon.
 
 \subsection{Cubemap Reflection on the Fountain (T6)}
 
-The fountain water surface is a thin cylinder rendered with a custom shader that reflects
-the skybox cubemap. For each fragment it computes the view direction $\mathbf{I}$, the
-surface normal $\mathbf{N}$, the reflection vector $\mathbf{R} = \text{reflect}(\mathbf{I},
-\mathbf{N})$, and samples $\text{textureCube}(tEnvMap, \mathbf{R})$. A Fresnel term
-$F = (1 - \max(-\mathbf{I}\cdot\mathbf{N}, 0))^3$ modulates the mix: at grazing angles
-(where the player looks across the water) reflection dominates (strength 0.9); looking
-straight down, the water's own dark teal colour (strength 0.45) shows through. This
-matches the physical behaviour of water---reflective at shallow angles, transparent when
-viewed from above---and makes the dusk sky ``paint'' itself onto the fountain.
+The fountain water reflects the skybox cubemap via
+$\mathbf{R} = \text{reflect}(\mathbf{I}, \mathbf{N})$. A Fresnel term
+$F = (1 - \max(-\mathbf{I}\cdot\mathbf{N}, 0))^3$ modulates the mix: grazing angles show
+mostly reflection (strength 0.9), looking straight down shows the water's dark teal
+(strength 0.45). This matches real water behaviour and makes the dusk sky paint itself
+onto the fountain.
 
 \subsection{Token Economy \& Game Mechanics (D1--D6)}
 
@@ -401,82 +330,53 @@ payout events, so sub-game physics and rendering are untouched.
 
 \subsection{The Skybox Was Invisible: the \texttt{mat3 + xyww} Trap}
 
-\textbf{Symptom.} The skybox mesh ($500^3$ box, cubemap texture) was completely invisible.
-Changing the fragment shader to output pure red produced no red pixels. No WebGL errors.
+\textbf{Symptom.} The $500^3$ skybox was completely invisible; even a pure-red fragment
+shader produced no pixels. No WebGL errors.
 
-\textbf{Root cause.} The textbook skybox trick uses
-\texttt{gl\_Position = (projection * mat3(modelView) * pos).xyww} to force $z = w$ so the
-box sits on the far plane. The \texttt{mat3()} strips translation; \texttt{xyww} forces
-depth. This assumes the camera is at the box centre. In our walkthrough scene the camera is
-at \texttt{[0, 1.7, 18]}, \emph{not} at the origin. For vertices behind the camera (e.g.\
-the $+Z$ face at view-space $z = 250$), the post-projection $w$ is negative, and the
-\texttt{xyww} trick sets $z = w < 0$. The clip test $-w \le z \le w$ then becomes
-``positive $\le$ negative $\le$ negative'', which fails. Roughly half the box's vertices
-were clipped away, collapsing most triangles.
+\textbf{Root cause.} The textbook trick \texttt{gl\_Position = (proj * mat3(mv) *
+pos).xyww} forces $z{=}w$ to place the box on the far plane. This assumes the camera is at
+the box centre. Our camera is at \texttt{[0, 1.7, 18]}---for vertices behind it, $w < 0$,
+so the clip test $-w \le z \le w$ fails and half the triangles are clipped away.
 
-\textbf{Fix.} Abandon the \texttt{mat3/xyww} trick entirely. Use standard projection
-(\texttt{gl\_Position = projection * modelView * vec4(pos,1)}) with a physically giant box
-($500^3$) centred at the world origin so the camera is always inside it. Render with
-\texttt{cullFace = GL\_FRONT}, \texttt{depthWrite = false}, and
-\texttt{frustumCulled = false}. This is robust for any camera position.
+\textbf{Fix.} Standard projection with a giant box centred at the origin, \texttt{cullFace
+= GL\_FRONT}, \texttt{depthWrite = false}. Robust for any camera position.
 
 \subsection{OGL Array-Uniform Naming}
 
-\textbf{Symptom.} With \texttt{uniform vec3 uLightPos[8]} in the shader, OGL logged
-``Active uniform uLightPos[0] has not been supplied'' every frame, even though we passed
-values.
+\textbf{Symptom.} \texttt{uniform vec3 uLightPos[8]} logged ``not supplied'' despite
+passing values.
 
-\textbf{Root cause.} OGL's \texttt{Program} parses the active-uniform name
-\texttt{uLightPos[0]} with a regex and looks up \texttt{this.uniforms['uLightPos']}. If
-the uniforms object was keyed as \texttt{'uLightPos[0]'} (as a naive port from raw
-WebGL would do), the lookup misses. Separately, OGL's \texttt{flatten()} checks
-\texttt{Array.isArray(value)}; a \texttt{Float32Array} returns \texttt{false} and is
-misinterpreted as a struct.
+\textbf{Root cause.} OGL parses \texttt{uLightPos[0]} and looks up the base name
+\texttt{uLightPos}; keying as \texttt{'uLightPos[0]'} misses. Also,
+\texttt{Float32Array} fails \texttt{Array.isArray()}, so OGL misinterprets it as a struct.
 
-\textbf{Fix.} (1) Key uniforms by the base name only (\texttt{uLightPos}, not
-\texttt{uLightPos[0]}). (2) Pass a plain JavaScript \texttt{Array} (not
-\texttt{Float32Array}) as the value. OGL then flattens and uploads via
-\texttt{uniform3fv} correctly.
+\textbf{Fix.} Key by base name; pass plain \texttt{Array} (not \texttt{Float32Array}).
 
-\subsection{ES-Module Import Paths and the \texttt{miniserve} Symlink}
+\subsection{ES-Module Import Paths}
 
-\textbf{Symptom.} \texttt{import \{\ldots\} from '../../ogl/src/index.js'} 404'd when the
-server root was the \texttt{Theme-Park/} directory, because the browser normalised the
-relative path back to the server root where \texttt{ogl/} did not exist.
+\textbf{Symptom.} \texttt{../../ogl/src/index.js} 404'd when serving from
+\texttt{Theme-Park/} alone.
 
-\textbf{Fix.} Serve from the \emph{repo root} (so all sibling game directories resolve),
-and add a \texttt{Theme-Park/ogl -> ../ogl} symlink so that the \texttt{../../ogl/...}
-path also resolves when \texttt{Theme-Park/} is served alone. \texttt{miniserve} must not
-be passed \texttt{-{}-no-symlinks}.
+\textbf{Fix.} Serve from repo root so all sibling directories resolve; add a
+\texttt{Theme-Park/ogl -> ../ogl} symlink for standalone serving.
 
 % =====================================================================
 \section{Most Proud Of}
 
-What we are most proud of is not any single technique but the \textbf{project's
-trajectory}. The four sub-games did not start as components of a theme park---they began
-as independent experiments. While learning the OGL library we built each game in
-isolation: a neon Pinball table to push hand-rolled physics and PBR metal, a Rubik's Cube
-to solve quaternion layer-rotation and raycast face-picking, a 3D Tetris to exercise
-SDF shaders and Bloom post-processing, and a Roller Coaster to tackle Catmull-Rom
-splines and Frenet--Serret framing. Each was a self-contained playground that explored a
-different corner of real-time computer graphics.
+What we are most proud of is the \textbf{project's trajectory}. The four sub-games did not
+start as components of a theme park---they began as independent experiments while learning
+OGL: a Pinball table for hand-rolled physics and PBR, a Rubik's Cube for quaternion
+layer-rotation and raycast picking, a 3D Tetris for SDF shaders and Bloom, and a Roller
+Coaster for Catmull-Rom splines and Frenet--Serret framing. Each explored a different
+corner of real-time graphics.
 
-The insight that turned four demos into one game was the \textbf{theme-park meta-game}. Instead
-of discarding the prototypes or rewriting them into a single renderer (an engineering
-nightmare with four independent OGL scenes), we asked: what if the park itself \emph{is}
-the integration layer? A first-person plaza where each door leads to a different game
-universe, connected by a shared token economy and a persistent save state. The meta-game then
-becomes the single place where every hard graphics requirement---skybox, Phong point
-lights, shadow mapping, cubemap reflection, textured surfaces, camera control---is
-concentrated and shown off at dusk, the one lighting condition where they all read
-simultaneously.
-
-So the real achievement is the \emph{architecture}: the four games kept their original
-physics, rendering, and gameplay untouched, and the meta-game glued them together with nothing
-more than page navigation, \texttt{localStorage}, and a shared hooks module. What was
-originally ``four ways to explore a library'' became \emph{Dusk Park}---one cohesive game
-where the player earns tokens in an arcade, spends them on a coaster ride, and watches
-fireworks after three tours, all set against a dusk sky that makes every graphics
-technique visible in a single frame.
+The insight that turned four demos into one game was the \textbf{meta-game}: instead of
+rewriting them into a single renderer, we made the park itself the integration layer. A
+first-person plaza where each door leads to a different game universe, connected by a
+shared token economy. The four games kept their physics, rendering, and gameplay untouched;
+the meta-game glued them together with page navigation, \texttt{localStorage}, and a shared
+hooks module. What was originally ``four ways to explore a library'' became \emph{Dusk
+Park}---one cohesive game set against a dusk sky that makes every graphics technique
+visible in a single frame.
 
 \end{document}
