@@ -353,3 +353,24 @@ html, body {
     border-color: #ffb878;
     box-shadow: 0 0 20px rgba(255, 184, 120, 0.3);
 }
+
+#loader .demo-btn {
+    margin-top: 16px;
+    padding: 8px 24px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#loader .demo-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+}
